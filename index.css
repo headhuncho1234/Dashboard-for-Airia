@@ -1,0 +1,20 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  min-height: 100vh;
+  background: #080e1c;
+}
+
+body {
+  background: #080e1c;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(245,158,11,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(59,130,246,0.1) 0%, transparent 60%);
+  background-attachment: fixed;
+}
+
+#root {
+  min-height: 100vh;
+  background: transparent;
+  isolation: isolate;
+}
