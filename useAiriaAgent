@@ -1,0 +1,95 @@
+import { useState, useCallback } from "react";
+
+const AGENTS = {
+  1: { id: "6c30db8e-f89f-463c-a724-30b4b2971d5c", name: "Data Processing" },
+  2: { id: "7be970e3-cdef-42c8-be4b-ae8664d2afe2", name: "Signal Discovery" },
+  3: { id: "ac8a9a6d-3688-4b1f-a9cd-5f35f2caa770", name: "Pattern Clustering" },
+  4: { id: "f05848cf-0e05-4cfa-b704-a789757a6548", name: "Persona Synthesis" },
+};
+
+// Parse agent output — handles JSON wrapped in markdown fences or raw JSON
+function parseOutput(raw) {
+  if (!raw) return null;
+  if (typeof raw === "object") return raw;
+  const str = String(raw);
+  // Strip markdown fences
+  const clean = str.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+  try {
+    return JSON.parse(clean);
+  } catch {
+    // Try to extract the first JSON object
+    const match = clean.match(/\{[\s\S]*\}/);
+    if (match) {
+      try { return JSON.parse(match[0]); } catch { return null; }
+    }
+    return null;
+  }
+}
+
+export function useAiriaAgent() {
+  const [agentData, setAgentData] = useState({});
+  const [loading, setLoading] = useState({});
+  const [errors, setErrors] = useState({});
+
+  const runAgent = useCallback(async (agentNum, prompt = "run") => {
+    const agent = AGENTS[agentNum];
+    if (!agent) return;
+
+    setLoading(prev => ({ ...prev, [agentNum]: true }));
+    setErrors(prev => ({ ...prev, [agentNum]: null }));
+
+    try {
+      const res = await fetch("/api/run-agent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ agentId: agent.id, userInput: prompt }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || `Agent ${agentNum} failed`);
+      }
+
+      const raw = await res.json();
+
+      // Extract the actual output — Airia returns it in different shapes
+      const output =
+        raw?.output ||
+        raw?.result ||
+        raw?.ai_full_response?.raw_response ||
+        raw?.data ||
+        raw;
+
+      const parsed = parseOutput(output);
+
+      setAgentData(prev => ({
+        ...prev,
+        [agentNum]: {
+          raw,
+          parsed,
+          timestamp: new Date().toISOString(),
+          runId: raw?.runId || raw?.id || null,
+        },
+      }));
+    } catch (err) {
+      setErrors(prev => ({ ...prev, [agentNum]: err.message }));
+    } finally {
+      setLoading(prev => ({ ...prev, [agentNum]: false }));
+    }
+  }, []);
+
+  const pollStatus = useCallback(async (runId, agentNum) => {
+    try {
+      const res = await fetch(`/api/agent-status?runId=${runId}`);
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data?.status || null;
+    } catch {
+      return null;
+    }
+  }, []);
+
+  return { agentData, loading, errors, runAgent, pollStatus };
+}
+
+export { AGENTS, parseOutput };
