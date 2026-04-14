@@ -362,9 +362,7 @@ function GlassCard({children,style,onClick,accentColor,className=""}){
     <div onClick={onClick} onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
       className={`glass ${className} ${onClick?"clickable":""}`}
       style={{
-        background:hov?"rgba(255,255,255,0.11)":"rgba(255,255,255,0.07)",
-        backdropFilter:"blur(28px) saturate(160%)",
-        WebkitBackdropFilter:"blur(28px) saturate(160%)",
+       
         border:hov&&accentColor?`1px solid ${accentColor}55`:"1px solid rgba(255,255,255,0.13)",
         borderRadius:16,
         boxShadow:hov
@@ -378,9 +376,6 @@ function GlassCard({children,style,onClick,accentColor,className=""}){
       {children}
     </div>
   );
-}
-
-// ─── MODAL SYSTEM ─────────────────────────────────────────────────────────────
 
 function Modal({modal,onClose}){
   useEffect(()=>{
