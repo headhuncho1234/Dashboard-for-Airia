@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { useAiriaAgent } from "./useAiriaAgent";
 
 // ─── KOA BRAND ───────────────────────────────────────────────────────────────
 const KOA_RED    = "#E8112D";
@@ -734,6 +735,7 @@ export default function App(){
   const[modal,setModal]=useState(null);
   const[time,setTime]=useState(new Date());
   const open=useCallback((type,item)=>setModal({type,item}),[]);
+  const{agentData,loading,errors,runAgent}=useAiriaAgent();
 
   useEffect(()=>{ document.body.className=dark?"":"light-mode"; },[dark]);
   useEffect(()=>{ const t=setInterval(()=>setTime(new Date()),1000); return()=>clearInterval(t); },[]);
@@ -980,43 +982,70 @@ export default function App(){
         {sec==="pipeline"&&(
           <div key="pipe" className="fu">
             <h1 style={{fontSize:22,fontWeight:700,letterSpacing:"-0.02em",marginBottom:4}}>Pipeline · 7-agent Airia workflow</h1>
-            <p style={{fontSize:13,color:tx.sub,marginBottom:18}}>KampSightDB · VDW · Airia Memory · Click any agent</p>
+            <p style={{fontSize:13,color:tx.sub,marginBottom:18}}>KampSightDB · VDW · Airia Memory · Click agent badge for details · Run live via Airia API</p>
             <div style={{display:"flex",flexDirection:"column",gap:9}}>
-              {AGENTS.map((a,i)=>(
-                <GCard key={a.id} onClick={()=>open("agent",a)} accent={a.color} className="fu" style={{padding:"17px 20px",animationDelay:`${i*50}ms`}}>
-                  <div style={{display:"flex",alignItems:"center",gap:14}}>
-                    <div style={{width:42,height:42,borderRadius:12,background:a.color+"1a",border:`1px solid ${a.color}40`,
-                      display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:800,color:a.color,flexShrink:0,fontFamily:"'DM Mono',monospace",textAlign:"center",lineHeight:1.2}}>
-                      AG{String(a.id).padStart(2,"0")}
-                    </div>
-                    <div style={{flex:1}}>
-                      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:3}}>
-                        <span style={{fontSize:13,fontWeight:600,color:tx.text}}>{a.name}</span>
-                        <span style={{width:6,height:6,borderRadius:"50%",background:a.color,display:"inline-block",
-                          boxShadow:`0 0 5px ${a.color}`,animation:a.status==="pending"?"pulse 2s infinite":"none"}}/>
-                        <span style={{fontSize:11,color:a.color,fontWeight:600,textTransform:"capitalize"}}>{a.status}</span>
+              {AGENTS.map((a,i)=>{
+                const liveData=agentData[a.id];
+                const isLoading=loading[a.id];
+                const err=errors[a.id];
+                const canRun=a.status==="complete"||a.status==="historical";
+                return(
+                  <GCard key={a.id} accent={a.color} className="fu" style={{padding:"17px 20px",animationDelay:`${i*50}ms`}}>
+                    <div style={{display:"flex",alignItems:"center",gap:14}}>
+                      <div onClick={()=>open("agent",a)} style={{width:42,height:42,borderRadius:12,background:a.color+"1a",border:`1px solid ${a.color}40`,
+                        display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:800,color:a.color,flexShrink:0,fontFamily:"'DM Mono',monospace",textAlign:"center",lineHeight:1.2,cursor:"pointer"}}>
+                        AG{String(a.id).padStart(2,"0")}
                       </div>
-                      <p style={{fontSize:12,color:tx.sub}}>{a.desc}</p>
-                    </div>
-                    <div style={{display:"flex",gap:14,flexShrink:0}}>
-                      {a.metrics.slice(0,2).map(([k,v])=>(
-                        <div key={k} style={{textAlign:"right"}}>
-                          <div style={{fontSize:9,color:tx.mut,textTransform:"uppercase",letterSpacing:"0.06em"}}>{k}</div>
-                          <div style={{fontSize:12,fontWeight:600,color:tx.text,fontFamily:"'DM Mono',monospace"}}>{v}</div>
+                      <div style={{flex:1}}>
+                        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:3,flexWrap:"wrap"}}>
+                          <span onClick={()=>open("agent",a)} style={{fontSize:13,fontWeight:600,color:tx.text,cursor:"pointer"}}>{a.name}</span>
+                          <span style={{width:6,height:6,borderRadius:"50%",background:isLoading?KOA_YELLOW:a.color,display:"inline-block",
+                            boxShadow:`0 0 5px ${isLoading?KOA_YELLOW:a.color}`,animation:(a.status==="pending"||isLoading)?"pulse 2s infinite":"none"}}/>
+                          <span style={{fontSize:11,color:isLoading?KOA_YELLOW:liveData?tx.green:a.color,fontWeight:600,textTransform:"capitalize"}}>
+                            {isLoading?"running...":liveData?"✓ live data":a.status}
+                          </span>
+                          {liveData&&<span style={{fontSize:10,color:tx.mut,fontFamily:"'DM Mono',monospace"}}>{new Date(liveData.timestamp).toLocaleTimeString()}</span>}
                         </div>
-                      ))}
+                        <p style={{fontSize:12,color:tx.sub}}>{a.desc}</p>
+                        {err&&<p style={{fontSize:11,color:KOA_RED,marginTop:4,fontFamily:"'DM Mono',monospace"}}>⚠ {err}</p>}
+                        {liveData?.parsed&&(
+                          <div style={{marginTop:8,padding:"8px 12px",background:"rgba(255,255,255,0.04)",borderRadius:8,border:"1px solid rgba(255,255,255,0.08)"}}>
+                            <div style={{fontSize:10,color:tx.mut,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:4}}>Live output preview</div>
+                            <pre style={{fontSize:10,color:tx.green,fontFamily:"'DM Mono',monospace",whiteSpace:"pre-wrap",wordBreak:"break-all",maxHeight:80,overflow:"hidden"}}>
+                              {JSON.stringify(liveData.parsed,null,2).slice(0,300)}...
+                            </pre>
+                          </div>
+                        )}
+                      </div>
+                      <div style={{display:"flex",gap:10,flexShrink:0,alignItems:"center"}}>
+                        {a.metrics.slice(0,2).map(([k,v])=>(
+                          <div key={k} style={{textAlign:"right"}}>
+                            <div style={{fontSize:9,color:tx.mut,textTransform:"uppercase",letterSpacing:"0.06em"}}>{k}</div>
+                            <div style={{fontSize:12,fontWeight:600,color:tx.text,fontFamily:"'DM Mono',monospace"}}>{v}</div>
+                          </div>
+                        ))}
+                        {canRun&&(
+                          <button onClick={()=>runAgent(a.id)} disabled={isLoading}
+                            style={{padding:"6px 14px",borderRadius:8,fontSize:11,fontWeight:600,fontFamily:"inherit",
+                              cursor:isLoading?"not-allowed":"pointer",whiteSpace:"nowrap",
+                              background:isLoading?"rgba(255,255,255,0.05)":KOA_RED+"18",
+                              border:`1px solid ${isLoading?"rgba(255,255,255,0.1)":KOA_RED+"50"}`,
+                              color:isLoading?tx.mut:KOA_RED,transition:"all 0.18s"}}>
+                            {isLoading?"Running...":"▶ Run"}
+                          </button>
+                        )}
+                      </div>
                     </div>
-                    <span style={{fontSize:12,color:tx.mut}}>→</span>
-                  </div>
-                </GCard>
-              ))}
+                  </GCard>
+                );
+              })}
             </div>
             <GCard style={{padding:"12px 18px",marginTop:12}}>
               <div style={{display:"flex",gap:24,fontSize:12,color:tx.sub,flexWrap:"wrap"}}>
                 <span><span style={{color:tx.green}}>● </span>Complete — real KOA data</span>
                 <span><span style={{color:KOA_YELLOW}}>● </span>Pending — awaiting trigger</span>
                 <span><span style={{color:tx.blue}}>● </span>Historical — benchmark</span>
-                <span style={{marginLeft:"auto",fontFamily:"'DM Mono',monospace",fontSize:11,color:tx.mut}}>Memory: Agent 1–4 wired</span>
+                <span style={{marginLeft:"auto",fontFamily:"'DM Mono',monospace",fontSize:11,color:tx.mut}}>Proxy: /api/run-agent · Key: AIRIA_API_KEY</span>
               </div>
             </GCard>
           </div>
