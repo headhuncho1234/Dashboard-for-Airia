@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { useAiriaAgent } from "./useAiriaAgent";
+import { useAiriaAgent } from "./useAiriaAgent.js";
 
 // ─── KOA BRAND ───────────────────────────────────────────────────────────────
 const KOA_RED    = "#E8112D";
