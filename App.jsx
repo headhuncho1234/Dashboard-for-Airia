@@ -187,7 +187,6 @@ const SIGNALS=[
                {ch:"Email",tactic:"30-Day Re-Engage",copy:"We held your spot. Here's 10% off your next booking — valid 30 days."},
                {ch:"TikTok",tactic:"Weather Protection",copy:"POV: You canceled your camping trip because of rain ☔ — here's what KOA offers instead [cabin upgrade reel]"},
                {ch:"Push",tactic:"Real-Time Intercept",copy:"Don't cancel yet — move your dates free. Your site is still available."}]}},
-
   {rank:2,id:"kampstore",name:"KampStore upsell velocity decline",tagline:"$7.3M revenue erosion — only 17.9% of guests buy in-store",
    volume:"11.2M txns",yoy:"−14.2%",revenue:"$7.3M erosion",actionability:"Immediate",trend:14,color:KOA_YELLOW,
    detail:{headline:"$194M in transactions — declining 3 consecutive years",
@@ -200,7 +199,6 @@ const SIGNALS=[
                {ch:"SMS",tactic:"Day 2 On-Site",copy:"Day 2 at [Campground]! Campfire essentials at the KampStore — open til 9pm. 🔥"},
                {ch:"TikTok",tactic:"Haul Content",copy:"What I bought at the KampStore for under $30 🏕️ — no trip is complete without these"},
                {ch:"In-App",tactic:"Check-in Upsell",copy:"One-tap add-on: Firewood bundle + firestarter for $12. Already in your cart."}]}},
-
   {rank:3,id:"loyalty",name:"Loyalty depth imbalance",tagline:"54% of guests never return — champions (4.7%) drive 22% of all nights",
    volume:"3.025M guests",yoy:"−22.3% base",revenue:"$73.6M opportunity",actionability:"Short-term",trend:22,color:"#8b5cf6",
    detail:{headline:"First-timers = 54.1% of guests but only 16.1% of nights",
@@ -215,7 +213,6 @@ const SIGNALS=[
                {ch:"TikTok",tactic:"First-Timer Conversion",copy:"Went camping once and never went back? Here's why your 2nd trip is 10× better 🏕️"},
                {ch:"SMS",tactic:"Champion Defense",copy:"[Name], your Elite status unlocks tomorrow's booking window for July 4th — first access."},
                {ch:"Push",tactic:"Tier Progress Nudge",copy:"2 more stays = BONUS tier. Book this weekend, unlock 20% KampStore discount."}]}},
-
   {rank:4,id:"cabin",name:"Cabin RevPAR premium",tagline:"51% higher revenue per reservation than RV — inventory is shrinking",
    volume:"271K reservations",yoy:"+4.3% ADR",revenue:"$96.5M potential",actionability:"Short-term",trend:4,color:"#10b981",
    detail:{headline:"Cabins at $386/res vs RV at $255/res — 51% premium",
@@ -227,7 +224,6 @@ const SIGNALS=[
                {ch:"TikTok",tactic:"Cabin vs Tent",copy:"POV: Your friends chose a tent, you chose a KOA cabin 😂 — same woods, totally different experience"},
                {ch:"Instagram",tactic:"Shoulder Season",copy:"Fall camping hits different in a cabin 🍂 October availability open — book before it fills."},
                {ch:"Retargeting",tactic:"RV-to-Cabin Upgrade",copy:"Weather got your trip? Upgrade to a cabin — same dates, different experience."}]}},
-
   {rank:5,id:"erosion",name:"Guest base erosion",tagline:"−22.3% unique guests since 2022 — sub-1M by 2027 without action",
    volume:"1.08M guests 2025",yoy:"−22.3%",revenue:"$140M LTV at risk",actionability:"Immediate",trend:22,color:KOA_RED,
    detail:{headline:"1.39M unique guests in 2022 → 1.08M in 2025",
@@ -400,7 +396,6 @@ function DRow({k,v,vc}){
   );
 }
 
-// GlassCard — background and blur handled entirely by CSS .glass class
 function GCard({children,style,onClick,accent,className=""}){
   return(
     <div onClick={onClick}
@@ -411,6 +406,356 @@ function GCard({children,style,onClick,accent,className=""}){
         ...style,
       }}>
       {children}
+    </div>
+  );
+}
+
+// ─── AGENT OUTPUT RENDERERS ──────────────────────────────────────────────────
+
+function parseAgentResult(raw) {
+  if (!raw) return null;
+  try {
+    let str = typeof raw.result === "string" ? raw.result : JSON.stringify(raw.result);
+    // strip markdown code fences (Agent 3 wraps in ```json ... ```)
+    str = str.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```\s*$/, "").trim();
+    // try single parse first
+    try {
+      const parsed = JSON.parse(str);
+      // if result is itself a string (double-encoded), parse again
+      if (typeof parsed === "string") return JSON.parse(parsed);
+      return parsed;
+    } catch {
+      return null;
+    }
+  } catch {
+    return null;
+  }
+}
+
+function PriorityBadge({ level }) {
+  const map = { High: KOA_RED, Medium: KOA_YELLOW, Low: "#64748b" };
+  const c = map[level] || "#64748b";
+  return (
+    <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 10,
+      background: c + "18", border: `1px solid ${c}35`, color: c, fontWeight: 700 }}>
+      {level} priority
+    </span>
+  );
+}
+
+function ImpactBadge({ label }) {
+  if (!label) return null;
+  const ll = label.toLowerCase();
+  const c = ll.includes("high") || ll.includes("critical") ? "#10b981"
+    : ll.includes("medium") ? KOA_YELLOW : "#64748b";
+  return (
+    <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 10,
+      background: c + "18", border: `1px solid ${c}35`, color: c, fontWeight: 600 }}>
+      {label}
+    </span>
+  );
+}
+
+// Agent 2: Signal Discovery
+function Agent2Output({ data }) {
+  const signals = data?.top_actionable_signals || [];
+  const insights = data?.strategic_insights?.segment_insights || {};
+  const recs = data?.strategic_insights?.strategic_recommendations || [];
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      {signals.length > 0 && (
+        <>
+          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", textTransform: "uppercase",
+            letterSpacing: "0.07em", fontWeight: 600, marginBottom: 2 }}>
+            Top actionable signals
+          </div>
+          {signals.map((s, i) => (
+            <div key={i} style={{ padding: "10px 12px", background: "rgba(255,255,255,0.05)",
+              borderRadius: 9, border: "1px solid rgba(255,255,255,0.09)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5, flexWrap: "wrap" }}>
+                <span style={{ fontSize: 11, fontWeight: 800, color: KOA_YELLOW,
+                  fontFamily: "'DM Mono',monospace" }}>#{s.rank}</span>
+                <span style={{ fontSize: 12, fontWeight: 600, color: "#f1f5f9" }}>{s.signal_name}</span>
+                {s.business_impact && <ImpactBadge label={s.business_impact} />}
+                {s.actionability && (
+                  <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 10,
+                    background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)",
+                    color: "#3b82f6", fontWeight: 600 }}>{s.actionability}</span>
+                )}
+              </div>
+              {s.recommendation && (
+                <p style={{ fontSize: 11, color: "rgba(255,255,255,0.52)", lineHeight: 1.5, marginBottom: s.expected_outcome ? 4 : 0 }}>
+                  {s.recommendation}
+                </p>
+              )}
+              {s.expected_outcome && (
+                <p style={{ fontSize: 10, color: "#10b981", lineHeight: 1.4 }}>→ {s.expected_outcome}</p>
+              )}
+            </div>
+          ))}
+        </>
+      )}
+
+      {Object.keys(insights).length > 0 && (
+        <>
+          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", textTransform: "uppercase",
+            letterSpacing: "0.07em", fontWeight: 600, marginTop: 6, marginBottom: 2 }}>
+            Segment insights
+          </div>
+          {Object.entries(insights).map(([seg, d]) => (
+            <div key={seg} style={{ padding: "9px 12px", background: "rgba(255,255,255,0.04)",
+              borderRadius: 8, border: "1px solid rgba(255,255,255,0.07)" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: KOA_YELLOW, marginBottom: 4 }}>{seg}</div>
+              {d.key_finding && (
+                <p style={{ fontSize: 10, color: "rgba(255,255,255,0.50)", marginBottom: 3 }}>
+                  <span style={{ color: "rgba(255,255,255,0.30)" }}>Finding: </span>{d.key_finding}
+                </p>
+              )}
+              {d.opportunity && (
+                <p style={{ fontSize: 10, color: "#10b981" }}>
+                  <span style={{ color: "rgba(255,255,255,0.30)" }}>Opportunity: </span>{d.opportunity}
+                </p>
+              )}
+            </div>
+          ))}
+        </>
+      )}
+
+      {recs.length > 0 && (
+        <>
+          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", textTransform: "uppercase",
+            letterSpacing: "0.07em", fontWeight: 600, marginTop: 6, marginBottom: 2 }}>
+            Strategic recommendations
+          </div>
+          {recs.map((r, i) => (
+            <div key={i} style={{ fontSize: 11, color: "rgba(255,255,255,0.50)", padding: "7px 10px",
+              background: "rgba(255,255,255,0.04)", borderRadius: 7,
+              border: "1px solid rgba(255,255,255,0.06)", lineHeight: 1.5 }}>
+              {typeof r === "string" ? r : r.recommendation || JSON.stringify(r)}
+            </div>
+          ))}
+        </>
+      )}
+    </div>
+  );
+}
+
+// Agent 3: Pattern Clustering
+function Agent3Output({ data }) {
+  const clusters = data?.clusters || [];
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+      {clusters.map((c) => (
+        <div key={c.cluster_id} style={{ padding: "12px 14px", background: "rgba(255,255,255,0.05)",
+          borderRadius: 10, border: "1px solid rgba(255,255,255,0.09)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 10, fontWeight: 800, color: KOA_YELLOW,
+              fontFamily: "'DM Mono',monospace" }}>C{c.cluster_id}</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: "#f1f5f9" }}>{c.cluster_name}</span>
+            {c.strategic_priority && <PriorityBadge level={c.strategic_priority} />}
+            <span style={{ fontSize: 9, color: "rgba(255,255,255,0.32)", marginLeft: "auto" }}>
+              {c.size_percentage?.toFixed?.(1) ?? c.size_percentage}% of pool
+            </span>
+          </div>
+
+          {c.behavioral_narrative && (
+            <p style={{ fontSize: 11, color: "rgba(255,255,255,0.52)", lineHeight: 1.55, marginBottom: 7 }}>
+              {c.behavioral_narrative}
+            </p>
+          )}
+
+          {c.distinguishing_characteristics?.length > 0 && (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 7 }}>
+              {c.distinguishing_characteristics.slice(0, 4).map((ch, i) => (
+                <span key={i} style={{ fontSize: 9, padding: "2px 8px", borderRadius: 10,
+                  background: "rgba(255,204,0,0.08)", border: "1px solid rgba(255,204,0,0.2)",
+                  color: "rgba(255,255,255,0.55)", lineHeight: 1.4 }}>{ch}</span>
+              ))}
+            </div>
+          )}
+
+          {c.attention_flags?.length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 7 }}>
+              {c.attention_flags.map((f, i) => (
+                <div key={i} style={{ fontSize: 10, color: "rgba(255,255,255,0.48)",
+                  padding: "5px 8px", background: "rgba(255,255,255,0.03)",
+                  borderRadius: 6, border: "1px solid rgba(255,255,255,0.06)", lineHeight: 1.4 }}>{f}</div>
+              ))}
+            </div>
+          )}
+
+          {c.recommended_strategies && (
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 6 }}>
+              {Object.entries(c.recommended_strategies).map(([k, v]) => (
+                <div key={k} style={{ padding: "7px 9px", background: "rgba(255,255,255,0.04)",
+                  borderRadius: 7, border: "1px solid rgba(255,255,255,0.07)" }}>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: KOA_RED,
+                    textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 3 }}>{k}</div>
+                  <p style={{ fontSize: 9, color: "rgba(255,255,255,0.40)", lineHeight: 1.4 }}>
+                    {typeof v === "string" ? v.slice(0, 100) + (v.length > 100 ? "…" : "") : ""}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Agent 4: Persona Synthesis
+function Agent4Output({ data }) {
+  const cards = data?.persona_cards || [];
+  const summary = data?.summary || {};
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+      {(summary.total_personas || summary.delivery_status) && (
+        <div style={{ display: "flex", gap: 14, fontSize: 11,
+          color: "rgba(255,255,255,0.45)", marginBottom: 2, flexWrap: "wrap" }}>
+          {summary.total_personas && (
+            <span><span style={{ color: KOA_YELLOW, fontWeight: 700 }}>{summary.total_personas}</span> personas</span>
+          )}
+          {summary.delivery_status && (
+            <span style={{ color: "#10b981", fontWeight: 600 }}>{summary.delivery_status}</span>
+          )}
+          {summary.ready_for_presentation && (
+            <span style={{ color: "#10b981" }}>✓ Presentation ready</span>
+          )}
+        </div>
+      )}
+
+      {cards.map((p) => {
+        const mp = p.profile?.motivations_pain_points || {};
+        const eng = p.strategy?.engagement || {};
+        const conf = p.metadata?.confidence_level;
+        const confColor = conf === "High" ? "#10b981" : KOA_YELLOW;
+
+        return (
+          <div key={p.card_number ?? p.persona_id} style={{ padding: "12px 14px",
+            background: "rgba(255,255,255,0.05)", borderRadius: 10,
+            border: "1px solid rgba(255,255,255,0.09)" }}>
+
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 5 }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 3, flexWrap: "wrap" }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: "#f1f5f9" }}>{p.persona_name}</span>
+                  {conf && (
+                    <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 10,
+                      background: confColor + "18", border: `1px solid ${confColor}35`,
+                      color: confColor, fontWeight: 700 }}>{conf} confidence</span>
+                  )}
+                  {p.strategy?.recommended_channel && (
+                    <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 10,
+                      background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)",
+                      color: "#3b82f6", fontWeight: 600 }}>{p.strategy.recommended_channel}</span>
+                  )}
+                  {p.campaign_readiness && (
+                    <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 10,
+                      background: "rgba(16,185,129,0.12)", border: "1px solid rgba(16,185,129,0.25)",
+                      color: "#10b981", fontWeight: 600 }}>● {p.campaign_readiness}</span>
+                  )}
+                </div>
+                {p.tagline && (
+                  <p style={{ fontSize: 11, color: "rgba(255,255,255,0.40)", fontStyle: "italic" }}>{p.tagline}</p>
+                )}
+              </div>
+            </div>
+
+            {p.value_proposition && (
+              <p style={{ fontSize: 11, color: "rgba(255,255,255,0.55)", lineHeight: 1.5,
+                marginBottom: 7, padding: "6px 9px", background: "rgba(255,204,0,0.06)",
+                borderRadius: 6, border: "1px solid rgba(255,204,0,0.15)" }}>
+                {p.value_proposition}
+              </p>
+            )}
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginBottom: 6 }}>
+              {Array.isArray(mp.motivations) && mp.motivations.length > 0 && (
+                <div style={{ padding: "7px 9px", background: "rgba(16,185,129,0.06)",
+                  borderRadius: 7, border: "1px solid rgba(16,185,129,0.15)" }}>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: "#10b981",
+                    textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 3 }}>Motivations</div>
+                  {mp.motivations.slice(0, 2).map((m, i) => (
+                    <p key={i} style={{ fontSize: 10, color: "rgba(255,255,255,0.48)", lineHeight: 1.4 }}>• {m}</p>
+                  ))}
+                </div>
+              )}
+              {Array.isArray(mp.pain_points) && mp.pain_points.length > 0 && (
+                <div style={{ padding: "7px 9px", background: "rgba(232,17,45,0.06)",
+                  borderRadius: 7, border: "1px solid rgba(232,17,45,0.15)" }}>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: KOA_RED,
+                    textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 3 }}>Pain points</div>
+                  {mp.pain_points.slice(0, 2).map((m, i) => (
+                    <p key={i} style={{ fontSize: 10, color: "rgba(255,255,255,0.48)", lineHeight: 1.4 }}>• {m}</p>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {Object.keys(eng).length > 0 && (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 5 }}>
+                {Object.entries(eng).map(([k, v]) => (
+                  <div key={k} style={{ padding: "6px 8px", background: "rgba(255,255,255,0.04)",
+                    borderRadius: 6, border: "1px solid rgba(255,255,255,0.06)" }}>
+                    <div style={{ fontSize: 8, fontWeight: 700, color: KOA_YELLOW,
+                      textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 2 }}>{k}</div>
+                    <p style={{ fontSize: 9, color: "rgba(255,255,255,0.42)", lineHeight: 1.4 }}>{v}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// Collapsible wrapper for all agent live output
+function AgentOutputPanel({ agentId, raw }) {
+  const [open, setOpen] = useState(false);
+  const parsed = useMemo(() => parseAgentResult(raw), [raw]);
+  const isStructured = !!parsed;
+
+  return (
+    <div style={{ marginTop: 8, borderRadius: 9, border: "1px solid rgba(255,255,255,0.09)", overflow: "hidden" }}>
+      <div onClick={() => setOpen(o => !o)}
+        style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 12px",
+          background: "rgba(255,255,255,0.05)", cursor: "pointer", userSelect: "none" }}>
+        <span style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", textTransform: "uppercase",
+          letterSpacing: "0.07em" }}>Live output</span>
+        <span style={{ fontSize: 9, padding: "1px 6px", borderRadius: 8, fontWeight: 700,
+          background: isStructured ? "rgba(16,185,129,0.15)" : "rgba(255,204,0,0.15)",
+          border: `1px solid ${isStructured ? "rgba(16,185,129,0.3)" : "rgba(255,204,0,0.3)"}`,
+          color: isStructured ? "#10b981" : KOA_YELLOW }}>
+          {isStructured ? "✓ structured" : "⚠ raw"}
+        </span>
+        <span style={{ marginLeft: "auto", fontSize: 11, color: "rgba(255,255,255,0.32)" }}>
+          {open ? "▲" : "▼"}
+        </span>
+      </div>
+      {open && (
+        <div style={{ padding: "12px", background: "rgba(0,0,0,0.2)",
+          maxHeight: 520, overflowY: "auto" }}>
+          {isStructured ? (
+            agentId === 2 ? <Agent2Output data={parsed} /> :
+            agentId === 3 ? <Agent3Output data={parsed} /> :
+            agentId === 4 ? <Agent4Output data={parsed} /> :
+            <pre style={{ fontSize: 10, color: "#10b981", fontFamily: "'DM Mono',monospace",
+              whiteSpace: "pre-wrap", wordBreak: "break-all" }}>
+              {JSON.stringify(parsed, null, 2).slice(0, 600)}…
+            </pre>
+          ) : (
+            <pre style={{ fontSize: 10, color: KOA_YELLOW, fontFamily: "'DM Mono',monospace",
+              whiteSpace: "pre-wrap", wordBreak: "break-all" }}>
+              {(typeof raw?.result === "string" ? raw.result : JSON.stringify(raw)).slice(0, 400)}…
+            </pre>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -768,7 +1113,6 @@ export default function App(){
         borderBottom:dark?"1px solid rgba(255,255,255,0.08)":"1px solid rgba(0,0,0,0.09)",
         height:56,display:"flex",alignItems:"center",padding:"0 22px",gap:14}}>
 
-        {/* KOA Logo mark */}
         <div style={{display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
           <div style={{width:30,height:30,borderRadius:8,
             background:`linear-gradient(135deg,${KOA_RED},#b0000e)`,
@@ -985,7 +1329,7 @@ export default function App(){
             <p style={{fontSize:13,color:tx.sub,marginBottom:18}}>KampSightDB · VDW · Airia Memory · Click agent badge for details · Run live via Airia API</p>
             <div style={{display:"flex",flexDirection:"column",gap:9}}>
               {AGENTS.map((a,i)=>{
-                const liveData=agentData[a.id];
+                const liveRaw=agentData[a.id];
                 const isLoading=loading[a.id];
                 const err=errors[a.id];
                 const canRun=a.status==="complete"||a.status==="historical";
@@ -1001,20 +1345,15 @@ export default function App(){
                           <span onClick={()=>open("agent",a)} style={{fontSize:13,fontWeight:600,color:tx.text,cursor:"pointer"}}>{a.name}</span>
                           <span style={{width:6,height:6,borderRadius:"50%",background:isLoading?KOA_YELLOW:a.color,display:"inline-block",
                             boxShadow:`0 0 5px ${isLoading?KOA_YELLOW:a.color}`,animation:(a.status==="pending"||isLoading)?"pulse 2s infinite":"none"}}/>
-                          <span style={{fontSize:11,color:isLoading?KOA_YELLOW:liveData?tx.green:a.color,fontWeight:600,textTransform:"capitalize"}}>
-                            {isLoading?"running...":liveData?"✓ live data":a.status}
+                          <span style={{fontSize:11,color:isLoading?KOA_YELLOW:liveRaw?tx.green:a.color,fontWeight:600,textTransform:"capitalize"}}>
+                            {isLoading?"running...":liveRaw?"✓ Live Data":a.status}
                           </span>
-                          {liveData&&<span style={{fontSize:10,color:tx.mut,fontFamily:"'DM Mono',monospace"}}>{new Date(liveData.timestamp).toLocaleTimeString()}</span>}
+                          {liveRaw?.timestamp&&<span style={{fontSize:10,color:tx.mut,fontFamily:"'DM Mono',monospace"}}>{new Date(liveRaw.timestamp).toLocaleTimeString()}</span>}
                         </div>
                         <p style={{fontSize:12,color:tx.sub}}>{a.desc}</p>
                         {err&&<p style={{fontSize:11,color:KOA_RED,marginTop:4,fontFamily:"'DM Mono',monospace"}}>⚠ {err}</p>}
-                        {liveData?.parsed&&(
-                          <div style={{marginTop:8,padding:"8px 12px",background:"rgba(255,255,255,0.04)",borderRadius:8,border:"1px solid rgba(255,255,255,0.08)"}}>
-                            <div style={{fontSize:10,color:tx.mut,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:4}}>Live output preview</div>
-                            <pre style={{fontSize:10,color:tx.green,fontFamily:"'DM Mono',monospace",whiteSpace:"pre-wrap",wordBreak:"break-all",maxHeight:80,overflow:"hidden"}}>
-                              {JSON.stringify(liveData.parsed,null,2).slice(0,300)}...
-                            </pre>
-                          </div>
+                        {liveRaw && (
+                          <AgentOutputPanel agentId={a.id} raw={liveRaw} />
                         )}
                       </div>
                       <div style={{display:"flex",gap:10,flexShrink:0,alignItems:"center"}}>
