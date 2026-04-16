@@ -454,7 +454,36 @@ function ImpactBadge({ label }) {
     </span>
   );
 }
-
+function Agent1Output({ data }) {
+  const segments = data?.segments || [];
+  const summary = data?.summary || {};
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      {(summary.total_guests || summary.segments_generated) && (
+        <div style={{ display: "flex", gap: 14, fontSize: 11, color: "rgba(255,255,255,0.45)", marginBottom: 2 }}>
+          <span><span style={{ color: KOA_YELLOW, fontWeight: 700 }}>{summary.total_guests}</span> guests analyzed</span>
+          <span><span style={{ color: "#10b981", fontWeight: 700 }}>{summary.segments_generated}</span> segments</span>
+          <span style={{ color: "rgba(255,255,255,0.3)" }}>{summary.date_range}</span>
+        </div>
+      )}
+      {segments.map((s, i) => (
+        <div key={i} style={{ padding: "10px 12px", background: "rgba(255,255,255,0.05)", borderRadius: 9, border: "1px solid rgba(255,255,255,0.09)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5, flexWrap: "wrap" }}>
+            <span style={{ fontSize: 10, fontWeight: 800, color: KOA_YELLOW, fontFamily: "'DM Mono',monospace" }}>#{i+1}</span>
+            <span style={{ fontSize: 11, fontWeight: 700, color: "#f1f5f9" }}>Guest {s.guest_id}</span>
+            <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 10, background: "rgba(16,185,129,0.15)", border: "1px solid rgba(16,185,129,0.3)", color: "#10b981", fontWeight: 600 }}>{s.frequency}</span>
+            <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 10, background: "rgba(255,204,0,0.12)", border: "1px solid rgba(255,204,0,0.3)", color: KOA_YELLOW, fontWeight: 600 }}>{s.spending}</span>
+            <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 10, background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", color: "#3b82f6", fontWeight: 600 }}>{s.pattern}</span>
+            <span style={{ fontSize: 9, color: "rgba(255,255,255,0.32)", marginLeft: "auto" }}>conf: {((s.confidence || 0) * 100).toFixed(0)}%</span>
+          </div>
+          {s.insights?.map((ins, j) => (
+            <p key={j} style={{ fontSize: 10, color: "rgba(255,255,255,0.48)", lineHeight: 1.4, marginBottom: 2 }}>• {ins}</p>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
 // Agent 2: Signal Discovery
 function Agent2Output({ data }) {
   const signals = data?.top_actionable_signals || [];
