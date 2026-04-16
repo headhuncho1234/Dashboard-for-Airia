@@ -31,6 +31,7 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           userInput,
           asyncOutput: false,
+          externalUserId: "koa-dashboard-user",
         }),
       }
     );
