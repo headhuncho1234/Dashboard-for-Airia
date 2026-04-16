@@ -28,7 +28,10 @@ export default async function handler(req, res) {
           "X-API-Key": apiKey,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userInput }),
+        body: JSON.stringify({
+          userInput,
+          asyncOutput: false,
+        }),
       }
     );
     if (!response.ok) {
