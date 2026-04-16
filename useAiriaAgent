@@ -7,23 +7,33 @@ const AGENTS = {
   4: { id: "f05848cf-0e05-4cfa-b704-a789757a6548", name: "Persona Synthesis" },
 };
 
-// Parse agent output — handles JSON wrapped in markdown fences or raw JSON
 function parseOutput(raw) {
   if (!raw) return null;
   if (typeof raw === "object") return raw;
   const str = String(raw);
-  // Strip markdown fences
   const clean = str.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
   try {
     return JSON.parse(clean);
   } catch {
-    // Try to extract the first JSON object
     const match = clean.match(/\{[\s\S]*\}/);
     if (match) {
       try { return JSON.parse(match[0]); } catch { return null; }
     }
     return null;
   }
+}
+
+function extractRawString(raw) {
+  if (!raw) return null;
+  if (typeof raw === "string") return raw;
+  const output =
+    raw?.result ||
+    raw?.output ||
+    raw?.ai_full_response?.raw_response ||
+    raw?.data;
+  if (output && typeof output === "string") return output;
+  if (output && typeof output === "object") return JSON.stringify(output, null, 2);
+  return JSON.stringify(raw, null, 2);
 }
 
 export function useAiriaAgent() {
@@ -52,21 +62,23 @@ export function useAiriaAgent() {
 
       const raw = await res.json();
 
-      // Extract the actual output — Airia returns it in different shapes
+      // Airia returns the main content in data.result
       const output =
-        raw?.output ||
         raw?.result ||
+        raw?.output ||
         raw?.ai_full_response?.raw_response ||
         raw?.data ||
         raw;
 
       const parsed = parseOutput(output);
+      const rawString = extractRawString(raw);
 
       setAgentData(prev => ({
         ...prev,
         [agentNum]: {
           raw,
           parsed,
+          rawString,
           timestamp: new Date().toISOString(),
           runId: raw?.runId || raw?.id || null,
         },
