@@ -5,6 +5,7 @@ const AGENT_IDS = {
   2: "7be970e3-cdef-42c8-be4b-ae8664d2afe2",
   3: "ac8a9a6d-3688-4b1f-a9cd-5f35f2caa770",
   4: "f05848cf-0e05-4cfa-b704-a789757a6548",
+  5: "197b7527-226d-46ce-a79e-1f97b3108aa4",
 };
 
 export function useAiriaAgent() {
@@ -18,31 +19,22 @@ export function useAiriaAgent() {
       setErrors(e => ({ ...e, [agentId]: "No pipeline ID for agent " + agentId }));
       return;
     }
-
     setLoading(l => ({ ...l, [agentId]: true }));
     setErrors(e => ({ ...e, [agentId]: null }));
-
     try {
       const res = await fetch("/api/run-agent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ agentId: pipelineId, userInput: "run" }),
       });
-
       if (!res.ok) {
         throw new Error("HTTP " + res.status + " — " + res.statusText);
       }
-
       const raw = await res.json();
-
-      // Check for explicit failure flag
       if (raw.success === false) {
         throw new Error(raw.error || "Agent returned failure");
       }
-
-      // Store the raw API response — parsing happens in AgentOutputPanel
       setAgentData(d => ({ ...d, [agentId]: raw }));
-
     } catch (err) {
       setErrors(e => ({ ...e, [agentId]: err.message }));
     } finally {
