@@ -254,10 +254,10 @@ const AGENTS=[
    desc:"AI archetype assignment using KampSightDB + VDW enrichment queries",
    metrics:[["Personas","8"],["High confidence","4 / 8"],["Campaign ready","8 / 8"],["Memory key","Agent 4 - Final Personas"]],
    memKey:"Agent 4 - Final Personas",ver:"v6.00"},
-  {id:5,short:"ORCH",name:"Master orchestrator",status:"pending",color:KOA_YELLOW,
-   desc:"Coordinates campaign routing across all 8 personas and prioritizes execution order",
-   metrics:[["Queued","8 personas"],["High priority","3"],["Status","Awaiting trigger"],["Next","Agent 6"]],
-   memKey:"Pending",ver:"Draft"},
+  {id:5,short:"ORCH",name:"Master orchestrator",status:"complete",color:"#10b981",
+   desc:"Campaign routing across all 8 personas — prioritized by spending signals and engagement strategy",
+   metrics:[["Personas","8"],["High priority","4"],["Campaign ready","8 / 8"],["Next","Agent 6"]],
+   memKey:"Agent 5 - Campaign Plans",ver:"v1.00"},
   {id:6,short:"EXEC",name:"Campaign execution",status:"pending",color:"#64748b",
    desc:"Email via KampSight, SMS via ZingleStaging, Push via Mobile App",
    metrics:[["Channels","Email + SMS + Push"],["Est reach","655K VKR members"],["Status","Pending Agent 5"],["Queued","8 personas"]],
@@ -326,6 +326,85 @@ const PERSONAS=[
               {ch:"TikTok",copy:"Camping on a $50 budget 🏕️ — KOA Fill-a-Site deals are actually real and I tried them"},
               {ch:"Email",copy:"Your 10th stay is free — and you're only 2 away, [Name]. Stay this weekend."}]},
 ];
+
+// ─── AGENT 5 DATA ─────────────────────────────────────────────────────────────
+const AGENT5_DATA = {
+  total_personas: 8,
+  high_priority_count: 4,
+  status: "complete",
+  ready_for_agent_6: true,
+  measurement_plan: {
+    primary_kpi: "RevPAR lift by segment",
+    secondary_kpis: ["Direct booking share", "Repeat stay rate", "Ancillary attach rate"],
+    reporting_cadence: "Monthly",
+    holdout_group_recommended: true,
+  },
+  global_suppression_rules: [
+    "Exclude guests with consent_unknown on email campaigns",
+    "Suppress S7 (Casual Occasionals) from SMS until phone coverage improves",
+    "Flag S2 duplicates for dedup before activation",
+  ],
+  campaign_plans: [
+    { persona_id:"P1", persona_name:"Loyal Enthusiasts", tagline:"The Heartbeat of the Campground", campaign_priority:"High",
+      activation_strategy:{ attract:"Early access to booking windows for VIP members.", convert:"Exclusive 'Loyalty Appreciation' weekend discounts.", retain:"Personalized 'Welcome Back' gifts at check-in." },
+      recommended_channels:"Books 6-9 months in advance for peak season.",
+      primary_motivations:["Consistency of service across the KOA network","Recognition of loyalty status"],
+      key_pain_points:["Difficulty securing specific favorite sites","Inconsistent Wi-Fi for streaming"],
+      kpis:["Year-over-year retention rate","Average lifetime value","VKR point redemption frequency"],
+      risk_factors:["Competitor loyalty poaching","Rising site rates"], campaign_readiness:"Ready" },
+    { persona_id:"P2", persona_name:"New Explorers", tagline:"Discovering the Great Outdoors", campaign_priority:"High",
+      activation_strategy:{ attract:"Social media campaigns highlighting 'Glamping' and easy-access sites.", convert:"First-timer discount bundles including a S'mores Kit.", retain:"Follow-up emails with 'How-to' camping guides for their next trip." },
+      recommended_channels:"Short lead times; often booking within 14 days of arrival.",
+      primary_motivations:["Instagrammable experiences","Escaping the city for mental wellness"],
+      key_pain_points:["Lack of camping equipment","Intimidated by RV hookup processes"],
+      kpis:["New customer acquisition rate","Social media engagement","Second-stay conversion"],
+      risk_factors:["One-and-done mentality","Weather sensitivity"], campaign_readiness:"Ready" },
+    { persona_id:"P4", persona_name:"Business Travelers", tagline:"The Mobile Office on the Road", campaign_priority:"High",
+      activation_strategy:{ attract:"LinkedIn ads targeting remote workers and digital nomads.", convert:"Mid-week 'Workation' discounts.", retain:"Corporate loyalty tier or streamlined expensing tools." },
+      recommended_channels:"Mid-week stays (Tues-Thurs); last-minute bookings.",
+      primary_motivations:["Reliable Wi-Fi for Zoom calls","Quiet environment during the day"],
+      key_pain_points:["Noisy families during work hours","Slow check-in/out processes"],
+      kpis:["Mid-week occupancy growth","Wi-Fi satisfaction scores","Repeat business stays"],
+      risk_factors:["Wi-Fi outages","Noise complaints"], campaign_readiness:"Ready" },
+    { persona_id:"P6", persona_name:"Family Campers", tagline:"Making Memories That Last", campaign_priority:"High",
+      activation_strategy:{ attract:"Family-centric Facebook ads and 'Kids Weekend' events.", convert:"Bundle deals including activity passes and meal vouchers.", retain:"Birthday month discounts for the children." },
+      recommended_channels:"Seasonal (Summer/Spring Break); 2-4 months lead time.",
+      primary_motivations:["Keeping kids entertained and safe","Affordable family bonding"],
+      key_pain_points:["Overcrowded pools","Lack of kid-friendly food options"],
+      kpis:["Amenity revenue per stay","Multi-generational booking rate","Summer occupancy"],
+      risk_factors:["Competing youth sports schedules","Economic downturns"], campaign_readiness:"Ready" },
+    { persona_id:"P3", persona_name:"Luxury Seekers", tagline:"Nature, But Make It Deluxe", campaign_priority:"Medium",
+      activation_strategy:{ attract:"High-production video ads showcasing Deluxe Cabin interiors.", convert:"Add-on packages for linen service or pre-stocked fridges.", retain:"Invitations to 'Resort-tier' KOA properties." },
+      recommended_channels:"Planned vacations; 3-4 months out.",
+      primary_motivations:["Comfort and luxury in a natural setting","High-end amenities (pools, cafes)"],
+      key_pain_points:["Basic communal bathrooms","Lack of concierge-style service"],
+      kpis:["Average Daily Rate (ADR)","Ancillary service revenue","Cabin occupancy rate"],
+      risk_factors:["High expectations for maintenance","Competition from AirBnb"], campaign_readiness:"Ready" },
+    { persona_id:"P5", persona_name:"Leisure Seekers", tagline:"Taking the Scenic Route", campaign_priority:"Medium",
+      activation_strategy:{ attract:"Direct mail brochures and RV show presence.", convert:"Extended stay monthly rates and 'Early Bird' renewal specials.", retain:"Community-building events (e.g., Bingo nights, craft fairs)." },
+      recommended_channels:"Long-term stays (28+ days); booked a year in advance.",
+      primary_motivations:["Socializing with other long-term campers","Safety and security of the park"],
+      key_pain_points:["Complicated digital-only interfaces","Physical accessibility of facilities"],
+      kpis:["Average length of stay","Renewal rate for seasonal sites","Referral volume"],
+      risk_factors:["Health-related travel cessation","Rising fuel costs"], campaign_readiness:"Ready" },
+    { persona_id:"P7", persona_name:"Adventure Seekers", tagline:"Your Basecamp for Exploration", campaign_priority:"Medium",
+      activation_strategy:{ attract:"Partnerships with outdoor brands (REI, Patagonia).", convert:"Late-arrival 'Self-Check-in' tutorials and discounts.", retain:"Cross-promotion with other 'Adventure' KOAs in the region." },
+      recommended_channels:"Weather-dependent; often booking 48-72 hours out.",
+      primary_motivations:["Proximity to National Parks and trailheads","Hot showers after a long hike"],
+      key_pain_points:["Strict check-in times (arriving late from trails)","High prices for basic sites"],
+      kpis:["Last-minute booking volume","Shower/Laundry usage rates","Regional circuit travel"],
+      risk_factors:["Competition from dispersed camping","Park closures"], campaign_readiness:"Ready" },
+    { persona_id:"P8", persona_name:"Budget Campers", tagline:"Great Value, Great Outdoors", campaign_priority:"Medium",
+      activation_strategy:{ attract:"Value-driven messaging: 'Vacation for under $50/night'.", convert:"No-fee weekends or 'Buy 2 Nights, Get 1 Free' promos.", retain:"Off-season discount vouchers." },
+      recommended_channels:"Price-sensitive; looks for 'Value' dates and off-peak times.",
+      primary_motivations:["Affordability compared to hotels","Access to clean water and electricity"],
+      key_pain_points:["Hidden fees (pet fees, extra person fees)","High weekend surcharges"],
+      kpis:["Price elasticity of demand","Off-peak occupancy","Promo code redemption"],
+      risk_factors:["Extreme price sensitivity","Switching to free public lands"], campaign_readiness:"Ready" },
+  ],
+};
+
+const PERSONA_ACCENT = { P1:KOA_YELLOW, P2:"#3b82f6", P3:"#8b5cf6", P4:"#10b981", P5:"#06b6d4", P6:"#ec4899", P7:"#84cc16", P8:"#f97316" };
 
 const LOYALTY_TIERS=[
   {tier:"Champions (11+ stays)",count:"142,609",pct:4.7,nights:"8.76M",nightPct:22.3,avgNights:61,color:KOA_YELLOW},
@@ -415,12 +494,9 @@ function parseAgentResult(raw) {
   if (!raw) return null;
   try {
     let str = typeof raw.result === "string" ? raw.result : JSON.stringify(raw.result);
-    // strip markdown code fences (Agent 3 wraps in ```json ... ```)
     str = str.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```\s*$/, "").trim();
-    // try single parse first
     try {
       const parsed = JSON.parse(str);
-      // if result is itself a string (double-encoded), parse again
       if (typeof parsed === "string") return JSON.parse(parsed);
       return parsed;
     } catch {
@@ -454,6 +530,7 @@ function ImpactBadge({ label }) {
     </span>
   );
 }
+
 function Agent1Output({ data }) {
   const segments = data?.segments || [];
   const summary = data?.summary || {};
@@ -484,82 +561,47 @@ function Agent1Output({ data }) {
     </div>
   );
 }
-// Agent 2: Signal Discovery
+
 function Agent2Output({ data }) {
   const signals = data?.top_actionable_signals || [];
   const insights = data?.strategic_insights?.segment_insights || {};
   const recs = data?.strategic_insights?.strategic_recommendations || [];
-
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
       {signals.length > 0 && (
         <>
-          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", textTransform: "uppercase",
-            letterSpacing: "0.07em", fontWeight: 600, marginBottom: 2 }}>
-            Top actionable signals
-          </div>
+          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 600, marginBottom: 2 }}>Top actionable signals</div>
           {signals.map((s, i) => (
-            <div key={i} style={{ padding: "10px 12px", background: "rgba(255,255,255,0.05)",
-              borderRadius: 9, border: "1px solid rgba(255,255,255,0.09)" }}>
+            <div key={i} style={{ padding: "10px 12px", background: "rgba(255,255,255,0.05)", borderRadius: 9, border: "1px solid rgba(255,255,255,0.09)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5, flexWrap: "wrap" }}>
-                <span style={{ fontSize: 11, fontWeight: 800, color: KOA_YELLOW,
-                  fontFamily: "'DM Mono',monospace" }}>#{s.rank}</span>
+                <span style={{ fontSize: 11, fontWeight: 800, color: KOA_YELLOW, fontFamily: "'DM Mono',monospace" }}>#{s.rank}</span>
                 <span style={{ fontSize: 12, fontWeight: 600, color: "#f1f5f9" }}>{s.signal_name}</span>
                 {s.business_impact && <ImpactBadge label={s.business_impact} />}
-                {s.actionability && (
-                  <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 10,
-                    background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)",
-                    color: "#3b82f6", fontWeight: 600 }}>{s.actionability}</span>
-                )}
+                {s.actionability && <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 10, background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", color: "#3b82f6", fontWeight: 600 }}>{s.actionability}</span>}
               </div>
-              {s.recommendation && (
-                <p style={{ fontSize: 11, color: "rgba(255,255,255,0.52)", lineHeight: 1.5, marginBottom: s.expected_outcome ? 4 : 0 }}>
-                  {s.recommendation}
-                </p>
-              )}
-              {s.expected_outcome && (
-                <p style={{ fontSize: 10, color: "#10b981", lineHeight: 1.4 }}>→ {s.expected_outcome}</p>
-              )}
+              {s.recommendation && <p style={{ fontSize: 11, color: "rgba(255,255,255,0.52)", lineHeight: 1.5, marginBottom: s.expected_outcome ? 4 : 0 }}>{s.recommendation}</p>}
+              {s.expected_outcome && <p style={{ fontSize: 10, color: "#10b981", lineHeight: 1.4 }}>→ {s.expected_outcome}</p>}
             </div>
           ))}
         </>
       )}
-
       {Object.keys(insights).length > 0 && (
         <>
-          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", textTransform: "uppercase",
-            letterSpacing: "0.07em", fontWeight: 600, marginTop: 6, marginBottom: 2 }}>
-            Segment insights
-          </div>
+          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 600, marginTop: 6, marginBottom: 2 }}>Segment insights</div>
           {Object.entries(insights).map(([seg, d]) => (
-            <div key={seg} style={{ padding: "9px 12px", background: "rgba(255,255,255,0.04)",
-              borderRadius: 8, border: "1px solid rgba(255,255,255,0.07)" }}>
+            <div key={seg} style={{ padding: "9px 12px", background: "rgba(255,255,255,0.04)", borderRadius: 8, border: "1px solid rgba(255,255,255,0.07)" }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: KOA_YELLOW, marginBottom: 4 }}>{seg}</div>
-              {d.key_finding && (
-                <p style={{ fontSize: 10, color: "rgba(255,255,255,0.50)", marginBottom: 3 }}>
-                  <span style={{ color: "rgba(255,255,255,0.30)" }}>Finding: </span>{d.key_finding}
-                </p>
-              )}
-              {d.opportunity && (
-                <p style={{ fontSize: 10, color: "#10b981" }}>
-                  <span style={{ color: "rgba(255,255,255,0.30)" }}>Opportunity: </span>{d.opportunity}
-                </p>
-              )}
+              {d.key_finding && <p style={{ fontSize: 10, color: "rgba(255,255,255,0.50)", marginBottom: 3 }}><span style={{ color: "rgba(255,255,255,0.30)" }}>Finding: </span>{d.key_finding}</p>}
+              {d.opportunity && <p style={{ fontSize: 10, color: "#10b981" }}><span style={{ color: "rgba(255,255,255,0.30)" }}>Opportunity: </span>{d.opportunity}</p>}
             </div>
           ))}
         </>
       )}
-
       {recs.length > 0 && (
         <>
-          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", textTransform: "uppercase",
-            letterSpacing: "0.07em", fontWeight: 600, marginTop: 6, marginBottom: 2 }}>
-            Strategic recommendations
-          </div>
+          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 600, marginTop: 6, marginBottom: 2 }}>Strategic recommendations</div>
           {recs.map((r, i) => (
-            <div key={i} style={{ fontSize: 11, color: "rgba(255,255,255,0.50)", padding: "7px 10px",
-              background: "rgba(255,255,255,0.04)", borderRadius: 7,
-              border: "1px solid rgba(255,255,255,0.06)", lineHeight: 1.5 }}>
+            <div key={i} style={{ fontSize: 11, color: "rgba(255,255,255,0.50)", padding: "7px 10px", background: "rgba(255,255,255,0.04)", borderRadius: 7, border: "1px solid rgba(255,255,255,0.06)", lineHeight: 1.5 }}>
               {typeof r === "string" ? r : r.recommendation || JSON.stringify(r)}
             </div>
           ))}
@@ -569,60 +611,39 @@ function Agent2Output({ data }) {
   );
 }
 
-// Agent 3: Pattern Clustering
 function Agent3Output({ data }) {
   const clusters = data?.clusters || [];
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
       {clusters.map((c) => (
-        <div key={c.cluster_id} style={{ padding: "12px 14px", background: "rgba(255,255,255,0.05)",
-          borderRadius: 10, border: "1px solid rgba(255,255,255,0.09)" }}>
+        <div key={c.cluster_id} style={{ padding: "12px 14px", background: "rgba(255,255,255,0.05)", borderRadius: 10, border: "1px solid rgba(255,255,255,0.09)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, flexWrap: "wrap" }}>
-            <span style={{ fontSize: 10, fontWeight: 800, color: KOA_YELLOW,
-              fontFamily: "'DM Mono',monospace" }}>C{c.cluster_id}</span>
+            <span style={{ fontSize: 10, fontWeight: 800, color: KOA_YELLOW, fontFamily: "'DM Mono',monospace" }}>C{c.cluster_id}</span>
             <span style={{ fontSize: 12, fontWeight: 700, color: "#f1f5f9" }}>{c.cluster_name}</span>
             {c.strategic_priority && <PriorityBadge level={c.strategic_priority} />}
-            <span style={{ fontSize: 9, color: "rgba(255,255,255,0.32)", marginLeft: "auto" }}>
-              {c.size_percentage?.toFixed?.(1) ?? c.size_percentage}% of pool
-            </span>
+            <span style={{ fontSize: 9, color: "rgba(255,255,255,0.32)", marginLeft: "auto" }}>{c.size_percentage?.toFixed?.(1) ?? c.size_percentage}% of pool</span>
           </div>
-
-          {c.behavioral_narrative && (
-            <p style={{ fontSize: 11, color: "rgba(255,255,255,0.52)", lineHeight: 1.55, marginBottom: 7 }}>
-              {c.behavioral_narrative}
-            </p>
-          )}
-
+          {c.behavioral_narrative && <p style={{ fontSize: 11, color: "rgba(255,255,255,0.52)", lineHeight: 1.55, marginBottom: 7 }}>{c.behavioral_narrative}</p>}
           {c.distinguishing_characteristics?.length > 0 && (
             <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginBottom: 7 }}>
               {c.distinguishing_characteristics.slice(0, 4).map((ch, i) => (
-                <span key={i} style={{ fontSize: 9, padding: "2px 8px", borderRadius: 10,
-                  background: "rgba(255,204,0,0.08)", border: "1px solid rgba(255,204,0,0.2)",
-                  color: "rgba(255,255,255,0.55)", lineHeight: 1.4 }}>{ch}</span>
+                <span key={i} style={{ fontSize: 9, padding: "2px 8px", borderRadius: 10, background: "rgba(255,204,0,0.08)", border: "1px solid rgba(255,204,0,0.2)", color: "rgba(255,255,255,0.55)", lineHeight: 1.4 }}>{ch}</span>
               ))}
             </div>
           )}
-
           {c.attention_flags?.length > 0 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 7 }}>
               {c.attention_flags.map((f, i) => (
-                <div key={i} style={{ fontSize: 10, color: "rgba(255,255,255,0.48)",
-                  padding: "5px 8px", background: "rgba(255,255,255,0.03)",
-                  borderRadius: 6, border: "1px solid rgba(255,255,255,0.06)", lineHeight: 1.4 }}>{f}</div>
+                <div key={i} style={{ fontSize: 10, color: "rgba(255,255,255,0.48)", padding: "5px 8px", background: "rgba(255,255,255,0.03)", borderRadius: 6, border: "1px solid rgba(255,255,255,0.06)", lineHeight: 1.4 }}>{f}</div>
               ))}
             </div>
           )}
-
           {c.recommended_strategies && (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 6 }}>
               {Object.entries(c.recommended_strategies).map(([k, v]) => (
-                <div key={k} style={{ padding: "7px 9px", background: "rgba(255,255,255,0.04)",
-                  borderRadius: 7, border: "1px solid rgba(255,255,255,0.07)" }}>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: KOA_RED,
-                    textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 3 }}>{k}</div>
-                  <p style={{ fontSize: 9, color: "rgba(255,255,255,0.40)", lineHeight: 1.4 }}>
-                    {typeof v === "string" ? v.slice(0, 100) + (v.length > 100 ? "…" : "") : ""}
-                  </p>
+                <div key={k} style={{ padding: "7px 9px", background: "rgba(255,255,255,0.04)", borderRadius: 7, border: "1px solid rgba(255,255,255,0.07)" }}>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: KOA_RED, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 3 }}>{k}</div>
+                  <p style={{ fontSize: 9, color: "rgba(255,255,255,0.40)", lineHeight: 1.4 }}>{typeof v === "string" ? v.slice(0, 100) + (v.length > 100 ? "…" : "") : ""}</p>
                 </div>
               ))}
             </div>
@@ -633,103 +654,56 @@ function Agent3Output({ data }) {
   );
 }
 
-// Agent 4: Persona Synthesis
 function Agent4Output({ data }) {
   const cards = data?.persona_cards || [];
   const summary = data?.summary || {};
-
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
       {(summary.total_personas || summary.delivery_status) && (
-        <div style={{ display: "flex", gap: 14, fontSize: 11,
-          color: "rgba(255,255,255,0.45)", marginBottom: 2, flexWrap: "wrap" }}>
-          {summary.total_personas && (
-            <span><span style={{ color: KOA_YELLOW, fontWeight: 700 }}>{summary.total_personas}</span> personas</span>
-          )}
-          {summary.delivery_status && (
-            <span style={{ color: "#10b981", fontWeight: 600 }}>{summary.delivery_status}</span>
-          )}
-          {summary.ready_for_presentation && (
-            <span style={{ color: "#10b981" }}>✓ Presentation ready</span>
-          )}
+        <div style={{ display: "flex", gap: 14, fontSize: 11, color: "rgba(255,255,255,0.45)", marginBottom: 2, flexWrap: "wrap" }}>
+          {summary.total_personas && <span><span style={{ color: KOA_YELLOW, fontWeight: 700 }}>{summary.total_personas}</span> personas</span>}
+          {summary.delivery_status && <span style={{ color: "#10b981", fontWeight: 600 }}>{summary.delivery_status}</span>}
+          {summary.ready_for_presentation && <span style={{ color: "#10b981" }}>✓ Presentation ready</span>}
         </div>
       )}
-
       {cards.map((p) => {
         const mp = p.profile?.motivations_pain_points || {};
         const eng = p.strategy?.engagement || {};
         const conf = p.metadata?.confidence_level;
         const confColor = conf === "High" ? "#10b981" : KOA_YELLOW;
-
         return (
-          <div key={p.card_number ?? p.persona_id} style={{ padding: "12px 14px",
-            background: "rgba(255,255,255,0.05)", borderRadius: 10,
-            border: "1px solid rgba(255,255,255,0.09)" }}>
-
+          <div key={p.card_number ?? p.persona_id} style={{ padding: "12px 14px", background: "rgba(255,255,255,0.05)", borderRadius: 10, border: "1px solid rgba(255,255,255,0.09)" }}>
             <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 5 }}>
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 3, flexWrap: "wrap" }}>
                   <span style={{ fontSize: 12, fontWeight: 700, color: "#f1f5f9" }}>{p.persona_name}</span>
-                  {conf && (
-                    <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 10,
-                      background: confColor + "18", border: `1px solid ${confColor}35`,
-                      color: confColor, fontWeight: 700 }}>{conf} confidence</span>
-                  )}
-                  {p.strategy?.recommended_channel && (
-                    <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 10,
-                      background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)",
-                      color: "#3b82f6", fontWeight: 600 }}>{p.strategy.recommended_channel}</span>
-                  )}
-                  {p.campaign_readiness && (
-                    <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 10,
-                      background: "rgba(16,185,129,0.12)", border: "1px solid rgba(16,185,129,0.25)",
-                      color: "#10b981", fontWeight: 600 }}>● {p.campaign_readiness}</span>
-                  )}
+                  {conf && <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 10, background: confColor + "18", border: `1px solid ${confColor}35`, color: confColor, fontWeight: 700 }}>{conf} confidence</span>}
+                  {p.strategy?.recommended_channel && <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 10, background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)", color: "#3b82f6", fontWeight: 600 }}>{p.strategy.recommended_channel}</span>}
+                  {p.campaign_readiness && <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 10, background: "rgba(16,185,129,0.12)", border: "1px solid rgba(16,185,129,0.25)", color: "#10b981", fontWeight: 600 }}>● {p.campaign_readiness}</span>}
                 </div>
-                {p.tagline && (
-                  <p style={{ fontSize: 11, color: "rgba(255,255,255,0.40)", fontStyle: "italic" }}>{p.tagline}</p>
-                )}
+                {p.tagline && <p style={{ fontSize: 11, color: "rgba(255,255,255,0.40)", fontStyle: "italic" }}>{p.tagline}</p>}
               </div>
             </div>
-
-            {p.value_proposition && (
-              <p style={{ fontSize: 11, color: "rgba(255,255,255,0.55)", lineHeight: 1.5,
-                marginBottom: 7, padding: "6px 9px", background: "rgba(255,204,0,0.06)",
-                borderRadius: 6, border: "1px solid rgba(255,204,0,0.15)" }}>
-                {p.value_proposition}
-              </p>
-            )}
-
+            {p.value_proposition && <p style={{ fontSize: 11, color: "rgba(255,255,255,0.55)", lineHeight: 1.5, marginBottom: 7, padding: "6px 9px", background: "rgba(255,204,0,0.06)", borderRadius: 6, border: "1px solid rgba(255,204,0,0.15)" }}>{p.value_proposition}</p>}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginBottom: 6 }}>
               {Array.isArray(mp.motivations) && mp.motivations.length > 0 && (
-                <div style={{ padding: "7px 9px", background: "rgba(16,185,129,0.06)",
-                  borderRadius: 7, border: "1px solid rgba(16,185,129,0.15)" }}>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: "#10b981",
-                    textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 3 }}>Motivations</div>
-                  {mp.motivations.slice(0, 2).map((m, i) => (
-                    <p key={i} style={{ fontSize: 10, color: "rgba(255,255,255,0.48)", lineHeight: 1.4 }}>• {m}</p>
-                  ))}
+                <div style={{ padding: "7px 9px", background: "rgba(16,185,129,0.06)", borderRadius: 7, border: "1px solid rgba(16,185,129,0.15)" }}>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: "#10b981", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 3 }}>Motivations</div>
+                  {mp.motivations.slice(0, 2).map((m, i) => <p key={i} style={{ fontSize: 10, color: "rgba(255,255,255,0.48)", lineHeight: 1.4 }}>• {m}</p>)}
                 </div>
               )}
               {Array.isArray(mp.pain_points) && mp.pain_points.length > 0 && (
-                <div style={{ padding: "7px 9px", background: "rgba(232,17,45,0.06)",
-                  borderRadius: 7, border: "1px solid rgba(232,17,45,0.15)" }}>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: KOA_RED,
-                    textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 3 }}>Pain points</div>
-                  {mp.pain_points.slice(0, 2).map((m, i) => (
-                    <p key={i} style={{ fontSize: 10, color: "rgba(255,255,255,0.48)", lineHeight: 1.4 }}>• {m}</p>
-                  ))}
+                <div style={{ padding: "7px 9px", background: "rgba(232,17,45,0.06)", borderRadius: 7, border: "1px solid rgba(232,17,45,0.15)" }}>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: KOA_RED, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 3 }}>Pain points</div>
+                  {mp.pain_points.slice(0, 2).map((m, i) => <p key={i} style={{ fontSize: 10, color: "rgba(255,255,255,0.48)", lineHeight: 1.4 }}>• {m}</p>)}
                 </div>
               )}
             </div>
-
             {Object.keys(eng).length > 0 && (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 5 }}>
                 {Object.entries(eng).map(([k, v]) => (
-                  <div key={k} style={{ padding: "6px 8px", background: "rgba(255,255,255,0.04)",
-                    borderRadius: 6, border: "1px solid rgba(255,255,255,0.06)" }}>
-                    <div style={{ fontSize: 8, fontWeight: 700, color: KOA_YELLOW,
-                      textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 2 }}>{k}</div>
+                  <div key={k} style={{ padding: "6px 8px", background: "rgba(255,255,255,0.04)", borderRadius: 6, border: "1px solid rgba(255,255,255,0.06)" }}>
+                    <div style={{ fontSize: 8, fontWeight: 700, color: KOA_YELLOW, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 2 }}>{k}</div>
                     <p style={{ fontSize: 9, color: "rgba(255,255,255,0.42)", lineHeight: 1.4 }}>{v}</p>
                   </div>
                 ))}
@@ -742,43 +716,96 @@ function Agent4Output({ data }) {
   );
 }
 
-// Collapsible wrapper for all agent live output
+function Agent5Output({ data }) {
+  const plans = data?.campaign_plans || AGENT5_DATA.campaign_plans;
+  const [selected, setSelected] = useState(null);
+  const high = plans.filter(p => p.campaign_priority === "High");
+  const medium = plans.filter(p => p.campaign_priority === "Medium");
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+      <div style={{ display: "flex", gap: 12, fontSize: 11, color: "rgba(255,255,255,0.45)", marginBottom: 2, flexWrap: "wrap" }}>
+        <span><span style={{ color: "#10b981", fontWeight: 700 }}>{plans.length}</span> personas orchestrated</span>
+        <span><span style={{ color: KOA_RED, fontWeight: 700 }}>{high.length}</span> high priority</span>
+        <span><span style={{ color: KOA_YELLOW, fontWeight: 700 }}>{medium.length}</span> medium priority</span>
+        <span style={{ color: "#10b981" }}>✓ Ready for Agent 6</span>
+      </div>
+      {plans.map((p) => {
+        const accent = PERSONA_ACCENT[p.persona_id] || "#64748b";
+        const priColor = p.campaign_priority === "High" ? KOA_RED : KOA_YELLOW;
+        const isOpen = selected === p.persona_id;
+        return (
+          <div key={p.persona_id} onClick={() => setSelected(isOpen ? null : p.persona_id)}
+            style={{ padding: "11px 13px", background: "rgba(255,255,255,0.05)", borderRadius: 10,
+              border: `1px solid ${isOpen ? accent + "50" : "rgba(255,255,255,0.09)"}`, cursor: "pointer", transition: "border 0.15s" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: isOpen ? 10 : 0 }}>
+              <span style={{ width: 7, height: 7, borderRadius: "50%", background: accent, flexShrink: 0 }} />
+              <span style={{ fontSize: 12, fontWeight: 700, color: "#f1f5f9", flex: 1 }}>{p.persona_name}</span>
+              <span style={{ fontSize: 9, padding: "2px 8px", borderRadius: 10, background: priColor + "18", border: `1px solid ${priColor}35`, color: priColor, fontWeight: 700 }}>{p.campaign_priority}</span>
+              <span style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", marginLeft: 4 }}>{isOpen ? "▲" : "▼"}</span>
+            </div>
+            {isOpen && (
+              <div>
+                <p style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", fontStyle: "italic", marginBottom: 10 }}>{p.tagline}</p>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 6, marginBottom: 10 }}>
+                  {[["Attract", p.activation_strategy.attract], ["Convert", p.activation_strategy.convert], ["Retain", p.activation_strategy.retain]].map(([k, v]) => (
+                    <div key={k} style={{ padding: "7px 9px", background: "rgba(255,255,255,0.04)", borderRadius: 7, border: "1px solid rgba(255,255,255,0.07)" }}>
+                      <div style={{ fontSize: 8, fontWeight: 700, color: accent, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 3 }}>{k}</div>
+                      <p style={{ fontSize: 9, color: "rgba(255,255,255,0.45)", lineHeight: 1.4 }}>{v}</p>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginBottom: 8 }}>
+                  <div style={{ padding: "7px 9px", background: "rgba(16,185,129,0.06)", borderRadius: 7, border: "1px solid rgba(16,185,129,0.15)" }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: "#10b981", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Motivations</div>
+                    {p.primary_motivations.map((m, i) => <p key={i} style={{ fontSize: 9, color: "rgba(255,255,255,0.48)", lineHeight: 1.4 }}>• {m}</p>)}
+                  </div>
+                  <div style={{ padding: "7px 9px", background: "rgba(232,17,45,0.06)", borderRadius: 7, border: "1px solid rgba(232,17,45,0.15)" }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: KOA_RED, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Pain points</div>
+                    {p.key_pain_points.map((m, i) => <p key={i} style={{ fontSize: 9, color: "rgba(255,255,255,0.48)", lineHeight: 1.4 }}>• {m}</p>)}
+                  </div>
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                  {p.kpis.map((k, i) => <span key={i} style={{ fontSize: 9, padding: "2px 7px", borderRadius: 8, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.5)" }}>{k}</span>)}
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function AgentOutputPanel({ agentId, raw }) {
   const [open, setOpen] = useState(false);
   const parsed = useMemo(() => parseAgentResult(raw), [raw]);
   const isStructured = !!parsed;
-
   return (
     <div style={{ marginTop: 8, borderRadius: 9, border: "1px solid rgba(255,255,255,0.09)", overflow: "hidden" }}>
       <div onClick={() => setOpen(o => !o)}
-        style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 12px",
-          background: "rgba(255,255,255,0.05)", cursor: "pointer", userSelect: "none" }}>
-        <span style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", textTransform: "uppercase",
-          letterSpacing: "0.07em" }}>Live output</span>
+        style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 12px", background: "rgba(255,255,255,0.05)", cursor: "pointer", userSelect: "none" }}>
+        <span style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", textTransform: "uppercase", letterSpacing: "0.07em" }}>Live output</span>
         <span style={{ fontSize: 9, padding: "1px 6px", borderRadius: 8, fontWeight: 700,
           background: isStructured ? "rgba(16,185,129,0.15)" : "rgba(255,204,0,0.15)",
           border: `1px solid ${isStructured ? "rgba(16,185,129,0.3)" : "rgba(255,204,0,0.3)"}`,
           color: isStructured ? "#10b981" : KOA_YELLOW }}>
           {isStructured ? "✓ structured" : "⚠ raw"}
         </span>
-        <span style={{ marginLeft: "auto", fontSize: 11, color: "rgba(255,255,255,0.32)" }}>
-          {open ? "▲" : "▼"}
-        </span>
+        <span style={{ marginLeft: "auto", fontSize: 11, color: "rgba(255,255,255,0.32)" }}>{open ? "▲" : "▼"}</span>
       </div>
       {open && (
-        <div style={{ padding: "12px", background: "rgba(0,0,0,0.2)",
-          maxHeight: 520, overflowY: "auto" }}>
+        <div style={{ padding: "12px", background: "rgba(0,0,0,0.2)", maxHeight: 520, overflowY: "auto" }}>
           {isStructured ? (
             agentId === 2 ? <Agent2Output data={parsed} /> :
             agentId === 3 ? <Agent3Output data={parsed} /> :
             agentId === 4 ? <Agent4Output data={parsed} /> :
-            <pre style={{ fontSize: 10, color: "#10b981", fontFamily: "'DM Mono',monospace",
-              whiteSpace: "pre-wrap", wordBreak: "break-all" }}>
+            agentId === 5 ? <Agent5Output data={parsed} /> :
+            <pre style={{ fontSize: 10, color: "#10b981", fontFamily: "'DM Mono',monospace", whiteSpace: "pre-wrap", wordBreak: "break-all" }}>
               {JSON.stringify(parsed, null, 2).slice(0, 600)}…
             </pre>
           ) : (
-            <pre style={{ fontSize: 10, color: KOA_YELLOW, fontFamily: "'DM Mono',monospace",
-              whiteSpace: "pre-wrap", wordBreak: "break-all" }}>
+            <pre style={{ fontSize: 10, color: KOA_YELLOW, fontFamily: "'DM Mono',monospace", whiteSpace: "pre-wrap", wordBreak: "break-all" }}>
               {(typeof raw?.result === "string" ? raw.result : JSON.stringify(raw)).slice(0, 400)}…
             </pre>
           )}
@@ -808,6 +835,7 @@ function Modal({modal,onClose}){
         {type==="kpi"         && <KpiModal item={item}/>}
         {type==="loyalty_tier"&& <LoyaltyTierModal item={item}/>}
         {type==="camp_metric" && <CampMetricModal item={item}/>}
+        {type==="campaign_plan"&&<CampaignPlanModal item={item}/>}
         <button onClick={onClose}
           style={{marginTop:20,padding:"8px 20px",borderRadius:10,
             background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.14)",
@@ -846,9 +874,7 @@ function MGrid({items,cols=2}){
 function Playbook({campaigns}){
   return(
     <>
-      <h3 style={{fontSize:11,fontWeight:600,color:"rgba(255,255,255,0.38)",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:10}}>
-        Campaign playbook
-      </h3>
+      <h3 style={{fontSize:11,fontWeight:600,color:"rgba(255,255,255,0.38)",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:10}}>Campaign playbook</h3>
       <div style={{display:"flex",flexDirection:"column",gap:8}}>
         {campaigns.map((c,i)=>(
           <div key={i} style={{padding:"12px 14px",background:"rgba(255,255,255,0.04)",borderRadius:10,border:"1px solid rgba(255,255,255,0.08)"}}>
@@ -856,6 +882,49 @@ function Playbook({campaigns}){
             <p style={{fontSize:12,color:"rgba(255,255,255,0.52)",lineHeight:1.65,fontStyle:"italic"}}>"{c.copy}"</p>
           </div>
         ))}
+      </div>
+    </>
+  );
+}
+
+function CampaignPlanModal({ item }) {
+  const accent = PERSONA_ACCENT[item.persona_id] || "#64748b";
+  const priColor = item.campaign_priority === "High" ? KOA_RED : KOA_YELLOW;
+  return (
+    <>
+      <MHead icon="◎" title={item.persona_name} sub={item.tagline} color={accent} />
+      <MGrid items={[
+        ["Priority", item.campaign_priority, priColor],
+        ["Campaign readiness", item.campaign_readiness, "#10b981"],
+        ["Booking pattern", item.recommended_channels],
+        ["Persona ID", item.persona_id, accent],
+      ]} cols={2} />
+      <h3 style={{ fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.38)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10 }}>Activation strategy</h3>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8, marginBottom: 16 }}>
+        {Object.entries(item.activation_strategy).map(([k, v]) => (
+          <div key={k} style={{ padding: "10px 12px", background: "rgba(255,255,255,0.05)", borderRadius: 10, border: "1px solid rgba(255,255,255,0.08)" }}>
+            <div style={{ fontSize: 9, fontWeight: 700, color: accent, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>{k}</div>
+            <p style={{ fontSize: 11, color: "rgba(255,255,255,0.52)", lineHeight: 1.5 }}>{v}</p>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
+        <div style={{ padding: "12px 14px", background: "rgba(16,185,129,0.08)", borderRadius: 10, border: "1px solid rgba(16,185,129,0.18)" }}>
+          <div style={{ fontSize: 10, color: "#10b981", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 6 }}>Primary motivations</div>
+          {item.primary_motivations.map((m, i) => <p key={i} style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", lineHeight: 1.5, marginBottom: 3 }}>• {m}</p>)}
+        </div>
+        <div style={{ padding: "12px 14px", background: "rgba(232,17,45,0.08)", borderRadius: 10, border: "1px solid rgba(232,17,45,0.18)" }}>
+          <div style={{ fontSize: 10, color: KOA_RED, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 6 }}>Key pain points</div>
+          {item.key_pain_points.map((m, i) => <p key={i} style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", lineHeight: 1.5, marginBottom: 3 }}>• {m}</p>)}
+        </div>
+      </div>
+      <h3 style={{ fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.38)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>KPIs</h3>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
+        {item.kpis.map((k, i) => <span key={i} style={{ fontSize: 11, padding: "4px 10px", borderRadius: 8, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.6)" }}>{k}</span>)}
+      </div>
+      <h3 style={{ fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.38)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Risk factors</h3>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+        {item.risk_factors.map((r, i) => <span key={i} style={{ fontSize: 11, padding: "4px 10px", borderRadius: 8, background: `${KOA_RED}10`, border: `1px solid ${KOA_RED}25`, color: KOA_RED }}>{r}</span>)}
       </div>
     </>
   );
@@ -1006,7 +1075,6 @@ function CampsSection({onSelect}){
   const[srt,setSrt]=useState("cancelRate");
   const[pg,setPg]=useState(0);
   const PER=24;
-
   const states=useMemo(()=>["All",...[...new Set(ALL_CAMPS.map(g=>g.state))].sort()],[]);
   const filtered=useMemo(()=>{
     let r=ALL_CAMPS;
@@ -1025,12 +1093,10 @@ function CampsSection({onSelect}){
   const paged=filtered.slice(pg*PER,(pg+1)*PER);
   const pages=Math.ceil(filtered.length/PER);
   const stats={total:ALL_CAMPS.length,flagged:ALL_CAMPS.filter(g=>g.flags.length>0).length,highC:ALL_CAMPS.filter(g=>g.cancelRate>20).length,lowK:ALL_CAMPS.filter(g=>g.kampPct<14).length};
-
   return(
     <div className="fu">
       <h1 style={{fontSize:22,fontWeight:700,letterSpacing:"-0.02em",marginBottom:4}}>Campground network · 518 locations</h1>
       <p style={{fontSize:13,color:"rgba(255,255,255,0.5)",marginBottom:20}}>KOA public franchise data · enriched with Agent 2 signal flags · click any location for detail + action plan</p>
-
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:18}}>
         {[{l:"Total campgrounds",v:stats.total,c:KOA_YELLOW},{l:"Flagged locations",v:stats.flagged,c:KOA_RED},{l:"High cancellation",v:stats.highC,c:KOA_RED},{l:"Low KampStore",v:stats.lowK,c:KOA_YELLOW}].map(s=>(
           <GCard key={s.l} style={{padding:"16px 14px"}}>
@@ -1039,7 +1105,6 @@ function CampsSection({onSelect}){
           </GCard>
         ))}
       </div>
-
       <GCard style={{padding:"14px 16px",marginBottom:14}}>
         <div style={{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center"}}>
           <input value={srch} onChange={e=>{setSrch(e.target.value);setPg(0);}} placeholder="Search campground..."
@@ -1064,7 +1129,6 @@ function CampsSection({onSelect}){
           <span style={{fontSize:11,color:"rgba(255,255,255,0.32)",marginLeft:"auto"}}>{filtered.length} locations</span>
         </div>
       </GCard>
-
       <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:14}}>
         {paged.map(g=>(
           <GCard key={g.id} onClick={()=>onSelect({type:"campground",item:g})} accent={g.flags.length?g.flags[0].color:KOA_YELLOW} className="fu" style={{padding:"14px 15px"}}>
@@ -1089,7 +1153,6 @@ function CampsSection({onSelect}){
           </GCard>
         ))}
       </div>
-
       {pages>1&&(
         <div style={{display:"flex",gap:8,justifyContent:"center",alignItems:"center"}}>
           <button onClick={()=>setPg(p=>Math.max(0,p-1))} disabled={pg===0} className="chip" style={{opacity:pg===0?0.4:1}}>← Prev</button>
@@ -1107,6 +1170,7 @@ export default function App(){
   const[sec,setSec]=useState("overview");
   const[modal,setModal]=useState(null);
   const[time,setTime]=useState(new Date());
+  const[orchFilter,setOrchFilter]=useState("All");
   const open=useCallback((type,item)=>setModal({type,item}),[]);
   const{agentData,loading,errors,runAgent}=useAiriaAgent();
 
@@ -1127,9 +1191,13 @@ export default function App(){
 
   const NAV=[
     {id:"overview",l:"Overview"},{id:"signals",l:"Signals"},{id:"pipeline",l:"Pipeline"},
-    {id:"personas",l:"Personas"},{id:"campaign",l:"Campaign"},{id:"loyalty",l:"Loyalty"},
-    {id:"accommodation",l:"Accommodation"},{id:"campgrounds",l:"Campgrounds"},
+    {id:"personas",l:"Personas"},{id:"orchestration",l:"Orchestration"},{id:"campaign",l:"Campaign"},
+    {id:"loyalty",l:"Loyalty"},{id:"accommodation",l:"Accommodation"},{id:"campgrounds",l:"Campgrounds"},
   ];
+
+  const filteredPlans = orchFilter === "All"
+    ? AGENT5_DATA.campaign_plans
+    : AGENT5_DATA.campaign_plans.filter(p => p.campaign_priority === orchFilter);
 
   return(
     <div style={{minHeight:"100vh",color:tx.text,fontFamily:"'DM Sans',system-ui,sans-serif",position:"relative"}}>
@@ -1184,21 +1252,21 @@ export default function App(){
         {sec==="overview"&&(
           <div key="ov" className="fu">
             <h1 style={{fontSize:24,fontWeight:700,letterSpacing:"-0.02em",marginBottom:4}}>KOA Guest Intelligence</h1>
-            <p style={{fontSize:13,color:tx.sub,marginBottom:22}}>7-agent Airia pipeline · 10.9M reservations · 518 campgrounds · Agents 1–4 complete · Click anything</p>
+            <p style={{fontSize:13,color:tx.sub,marginBottom:22}}>7-agent Airia pipeline · 10.9M reservations · 518 campgrounds · Agents 1–5 complete · Click anything</p>
 
             <div style={{display:"grid",gridTemplateColumns:"repeat(6,1fr)",gap:10,marginBottom:16}}>
               {[
                 {l:"Reservations",v:r.toLocaleString(),s:"2022–2026 YTD",c:KOA_YELLOW,delay:0,
                   kpi:{title:"Reservations analyzed",context:"KOA network · 2022–2026 YTD",color:KOA_YELLOW,
-                    insight:"10.9M reservation records analyzed across 518 campgrounds. Covers completed stays, cancellations (1.2M), and active bookings.",
+                    insight:"10.9M reservation records analyzed across 518 campgrounds.",
                     metrics:[["Total records","10,893,242"],["Cancellations","1,226,412"],["Campgrounds","518"],["Date range","2022–2026 YTD"],["Data sources","KampSightDB + VDW"],["Agents used","Agent 1 + Agent 2"]]}},
                 {l:"Campaign ROI",v:roi+"%",s:"$45K → $482K",c:tx.green,delay:80,
                   kpi:{title:"Campaign ROI · 972.5%",context:"KOA-SPRING-REAWAKENING-2026",color:tx.green,
-                    insight:"$45,000 campaign cost generated $482,625 in attributed revenue. Two-sample t-test: p=0.000. 95% CI [16.17%, 21.83%].",
+                    insight:"$45,000 campaign cost generated $482,625 in attributed revenue.",
                     metrics:[["Campaign cost","$45,000"],["Attributed revenue","$482,625"],["ROI","972.5%"],["p-value","0.000"],["CI lower","16.17%"],["CI upper","21.83%"]]}},
                 {l:"Attributed rev",v:"$"+Math.round(rev/1000)+"K",s:"KOA-SPRING-2026",c:KOA_YELLOW,delay:160,
                   kpi:{title:"Attributed revenue · $482,625",context:"Post-campaign attribution at 0.70 factor",color:KOA_YELLOW,
-                    insight:"Gross post-campaign revenue $742,875 × 0.70 attribution factor = $482,625. Conservative factor applied for statistical integrity.",
+                    insight:"Gross post-campaign revenue $742,875 × 0.70 attribution factor = $482,625.",
                     metrics:[["Gross revenue","$742,875"],["Attribution factor","0.70"],["Attributed","$482,625"],["Channel split","Email (250K) + SMS (45K)"],["Personas","Loyal Enthusiasts + New Explorers"],["Campaign window","Q1 2026"]]}},
                 {l:"Booking lift",v:lift+"%",s:"p=0.000 · 95% CI",c:tx.blue,delay:240,
                   kpi:{title:"Booking lift · 19.0%",context:"Pre vs post campaign",color:tx.blue,
@@ -1206,11 +1274,11 @@ export default function App(){
                     metrics:[["Pre-campaign","12,500"],["Post-campaign","14,875"],["Absolute lift","2,375"],["Lift %","19.0%"],["Test","Two-sample t-test"],["Confidence","95%"]]}},
                 {l:"VKR members",v:vkr.toLocaleString(),s:"VIP · BONUS · BASE",c:tx.pur,delay:320,
                   kpi:{title:"VKR loyalty members · 655,022",context:"Active VKR program",color:tx.pur,
-                    insight:"655,022 active VKR members. Critical: 276,080 enrolled members have NO assigned tier — the single highest-ROI activation opportunity.",
+                    insight:"655,022 active VKR members. 276,080 enrolled members have NO assigned tier — highest-ROI activation opportunity.",
                     metrics:[["VIP tier","47,695"],["BONUS tier","101,649"],["BASE tier","231,993"],["Untiered (active)","276,080"],["Total active","655,022"],["Activation gap","276K = highest-ROI target"]]}},
                 {l:"Campgrounds",v:camps.toLocaleString(),s:"Active network",c:tx.green,delay:400,
                   kpi:{title:"KOA campground network · 518",context:"Active franchise network",color:tx.green,
-                    insight:"518 active KOA campgrounds across 45+ states. Journey, Holiday, and Resort tiers. Agent 2 flagged ~90 high-cancellation locations.",
+                    insight:"518 active KOA campgrounds across 45+ states.",
                     metrics:[["Total","518"],["Journey tier","~300"],["Holiday tier","~160"],["Resort tier","~58"],["States covered","45+"],["High cancel flagged","~90 locations"]]}},
               ].map(k=>(
                 <GCard key={k.l} onClick={()=>open("kpi",k.kpi)} accent={k.c} className="fu" style={{padding:"16px 14px",animationDelay:`${k.delay}ms`}}>
@@ -1225,7 +1293,7 @@ export default function App(){
             <GCard style={{padding:"16px 18px",marginBottom:14}}>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
                 <h2 style={{fontSize:13,fontWeight:600,color:tx.text}}>Pipeline status · click any agent</h2>
-                <span style={{fontSize:11,color:tx.green,fontWeight:600}}>4 / 7 complete · 2 pending · 1 historical</span>
+                <span style={{fontSize:11,color:tx.green,fontWeight:600}}>5 / 7 complete · 1 pending · 1 historical</span>
               </div>
               <div style={{display:"flex",gap:5,alignItems:"center"}}>
                 {AGENTS.map((a,i)=>(
@@ -1267,20 +1335,29 @@ export default function App(){
                 ))}
               </GCard>
 
-              <GCard style={{padding:"18px 18px"}} onClick={()=>setSec("campaign")}>
+              {/* Agent 5 orchestration preview on overview */}
+              <GCard style={{padding:"18px 18px"}} onClick={()=>setSec("orchestration")}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
-                  <h2 style={{fontSize:13,fontWeight:600,color:tx.text}}>Campaign · KOA-SPRING-2026</h2>
-                  <span style={{fontSize:11,color:KOA_RED}}>Full breakdown →</span>
+                  <h2 style={{fontSize:13,fontWeight:600,color:tx.text}}>Orchestration · Agent 5</h2>
+                  <span style={{fontSize:11,color:"#10b981",fontWeight:600}}>✓ Complete →</span>
                 </div>
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-                  {[{l:"Booking lift",v:"19.0%",c:tx.green},{l:"ROI",v:"972.5%",c:KOA_YELLOW},
-                    {l:"Email open rate",v:"25.0%",c:tx.blue},{l:"SMS read rate",v:"87.3%",c:tx.green},
-                    {l:"Attributed rev",v:"$482,625",c:KOA_YELLOW},{l:"Campaign cost",v:"$45,000",c:tx.sub}].map(m=>(
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}}>
+                  {[{l:"High priority",v:"4 personas",c:KOA_RED},{l:"Medium priority",v:"4 personas",c:KOA_YELLOW},
+                    {l:"Campaign ready",v:"8 / 8",c:"#10b981"},{l:"Primary KPI",v:"RevPAR lift",c:tx.sub}].map(m=>(
                     <div key={m.l} style={{padding:"9px 10px",background:"rgba(255,255,255,0.05)",borderRadius:9,border:"1px solid rgba(255,255,255,0.08)"}}>
                       <div style={{fontSize:9,color:tx.mut,textTransform:"uppercase",letterSpacing:"0.06em",marginBottom:3}}>{m.l}</div>
-                      <div style={{fontSize:15,fontWeight:700,color:m.c,fontVariantNumeric:"tabular-nums"}}>{m.v}</div>
+                      <div style={{fontSize:13,fontWeight:700,color:m.c}}>{m.v}</div>
                     </div>
                   ))}
+                </div>
+                <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
+                  {AGENT5_DATA.campaign_plans.slice(0,4).map(p=>(
+                    <span key={p.persona_id} style={{fontSize:9,padding:"2px 8px",borderRadius:8,
+                      background:(PERSONA_ACCENT[p.persona_id]||"#64748b")+"18",
+                      border:`1px solid ${(PERSONA_ACCENT[p.persona_id]||"#64748b")}35`,
+                      color:PERSONA_ACCENT[p.persona_id]||"#64748b",fontWeight:600}}>{p.persona_name}</span>
+                  ))}
+                  <span style={{fontSize:9,color:tx.mut,padding:"2px 4px"}}>+4 more</span>
                 </div>
               </GCard>
             </div>
@@ -1341,12 +1418,6 @@ export default function App(){
                 </GCard>
               ))}
             </div>
-            <GCard style={{padding:"16px 18px",marginTop:12}}>
-              <h3 style={{fontSize:12,fontWeight:600,color:tx.text,marginBottom:10}}>Channels across all signal campaigns</h3>
-              <div style={{display:"flex",gap:7,flexWrap:"wrap"}}>
-                {["Email","SMS","TikTok","Instagram","Push","LinkedIn Ads","Meta Ads","Pinterest","Google SEM","AllTrails","YouTube Pre-roll","Influencer","In-App"].map(ch=><ChBadge key={ch} ch={ch}/>)}
-              </div>
-            </GCard>
           </div>
         )}
 
@@ -1380,9 +1451,7 @@ export default function App(){
                         </div>
                         <p style={{fontSize:12,color:tx.sub}}>{a.desc}</p>
                         {err&&<p style={{fontSize:11,color:KOA_RED,marginTop:4,fontFamily:"'DM Mono',monospace"}}>⚠ {err}</p>}
-                        {liveRaw && (
-                          <AgentOutputPanel agentId={a.id} raw={liveRaw} />
-                        )}
+                        {liveRaw && <AgentOutputPanel agentId={a.id} raw={liveRaw} />}
                       </div>
                       <div style={{display:"flex",gap:10,flexShrink:0,alignItems:"center"}}>
                         {a.metrics.slice(0,2).map(([k,v])=>(
@@ -1407,14 +1476,6 @@ export default function App(){
                 );
               })}
             </div>
-            <GCard style={{padding:"12px 18px",marginTop:12}}>
-              <div style={{display:"flex",gap:24,fontSize:12,color:tx.sub,flexWrap:"wrap"}}>
-                <span><span style={{color:tx.green}}>● </span>Complete — real KOA data</span>
-                <span><span style={{color:KOA_YELLOW}}>● </span>Pending — awaiting trigger</span>
-                <span><span style={{color:tx.blue}}>● </span>Historical — benchmark</span>
-                <span style={{marginLeft:"auto",fontFamily:"'DM Mono',monospace",fontSize:11,color:tx.mut}}>Proxy: /api/run-agent · Key: AIRIA_API_KEY</span>
-              </div>
-            </GCard>
           </div>
         )}
 
@@ -1451,24 +1512,123 @@ export default function App(){
           </div>
         )}
 
+        {/* ── ORCHESTRATION (AGENT 5) ── */}
+        {sec==="orchestration"&&(
+          <div key="orch" className="fu">
+            <h1 style={{fontSize:22,fontWeight:700,letterSpacing:"-0.02em",marginBottom:4}}>Master orchestration · Agent 5</h1>
+            <p style={{fontSize:13,color:tx.sub,marginBottom:18}}>8 personas prioritized · campaign plans generated · ready for Agent 6 execution · click any card for full detail</p>
+
+            {/* Summary metrics */}
+            <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:16}}>
+              {[
+                {l:"Total personas",v:"8",s:"All campaign ready",c:KOA_YELLOW},
+                {l:"High priority",v:"4",s:"Immediate activation",c:KOA_RED},
+                {l:"Medium priority",v:"4",s:"Short-term activation",c:KOA_YELLOW},
+                {l:"Primary KPI",v:"RevPAR",s:"Lift by segment · Monthly",c:tx.green},
+              ].map(m=>(
+                <GCard key={m.l} style={{padding:"16px 14px"}} accent={m.c}>
+                  <div style={{fontSize:10,color:tx.mut,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:8,fontWeight:500}}>{m.l}</div>
+                  <div style={{fontSize:24,fontWeight:700,color:m.c,fontVariantNumeric:"tabular-nums"}}>{m.v}</div>
+                  <div style={{fontSize:10,color:tx.mut,marginTop:4}}>{m.s}</div>
+                </GCard>
+              ))}
+            </div>
+
+            {/* Filter chips */}
+            <div style={{display:"flex",gap:8,marginBottom:14}}>
+              {["All","High","Medium"].map(f=>(
+                <button key={f} onClick={()=>setOrchFilter(f)} className={`chip ${orchFilter===f?"active":""}`}>{f} priority</button>
+              ))}
+              <span style={{fontSize:11,color:tx.mut,alignSelf:"center",marginLeft:4}}>{filteredPlans.length} personas</span>
+            </div>
+
+            {/* Campaign plan cards */}
+            <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:16}}>
+              {filteredPlans.map((p,i)=>{
+                const accent=PERSONA_ACCENT[p.persona_id]||"#64748b";
+                const priColor=p.campaign_priority==="High"?KOA_RED:KOA_YELLOW;
+                return(
+                  <GCard key={p.persona_id} onClick={()=>open("campaign_plan",p)} accent={accent} className="fu" style={{padding:"18px 20px",animationDelay:`${i*40}ms`}}>
+                    <div style={{display:"flex",alignItems:"flex-start",gap:14}}>
+                      <div style={{width:40,height:40,borderRadius:11,background:accent+"1a",border:`1px solid ${accent}40`,
+                        display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:800,color:accent,flexShrink:0,fontFamily:"'DM Mono',monospace"}}>
+                        {p.persona_id}
+                      </div>
+                      <div style={{flex:1}}>
+                        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:4,flexWrap:"wrap"}}>
+                          <h3 style={{fontSize:14,fontWeight:600,color:tx.text}}>{p.persona_name}</h3>
+                          <span style={{fontSize:10,padding:"2px 9px",borderRadius:20,fontWeight:700,
+                            background:priColor+"18",border:`1px solid ${priColor}35`,color:priColor}}>{p.campaign_priority} priority</span>
+                          <span style={{fontSize:9,padding:"2px 7px",borderRadius:8,background:"rgba(16,185,129,0.12)",border:"1px solid rgba(16,185,129,0.25)",color:"#10b981",fontWeight:600}}>● {p.campaign_readiness}</span>
+                        </div>
+                        <p style={{fontSize:11,color:tx.sub,fontStyle:"italic",marginBottom:10}}>{p.tagline}</p>
+                        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginBottom:10}}>
+                          {[["Attract",p.activation_strategy.attract],["Convert",p.activation_strategy.convert],["Retain",p.activation_strategy.retain]].map(([k,v])=>(
+                            <div key={k} style={{padding:"8px 10px",background:"rgba(255,255,255,0.04)",borderRadius:8,border:"1px solid rgba(255,255,255,0.07)"}}>
+                              <div style={{fontSize:8,fontWeight:700,color:accent,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:3}}>{k}</div>
+                              <p style={{fontSize:10,color:tx.sub,lineHeight:1.4}}>{v}</p>
+                            </div>
+                          ))}
+                        </div>
+                        <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+                          {p.kpis.map((k,j)=>(
+                            <span key={j} style={{fontSize:9,padding:"2px 8px",borderRadius:8,background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.1)",color:tx.mut}}>{k}</span>
+                          ))}
+                        </div>
+                      </div>
+                      <span style={{fontSize:11,color:tx.mut,flexShrink:0}}>Full detail →</span>
+                    </div>
+                  </GCard>
+                );
+              })}
+            </div>
+
+            {/* Global suppression + measurement */}
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+              <GCard style={{padding:"16px 18px"}}>
+                <h3 style={{fontSize:12,fontWeight:600,color:tx.text,marginBottom:12}}>Global suppression rules</h3>
+                {AGENT5_DATA.global_suppression_rules.map((rule,i)=>(
+                  <div key={i} style={{display:"flex",gap:8,marginBottom:8,fontSize:12,color:tx.sub,lineHeight:1.5}}>
+                    <span style={{color:KOA_YELLOW,flexShrink:0}}>—</span>{rule}
+                  </div>
+                ))}
+              </GCard>
+              <GCard style={{padding:"16px 18px"}}>
+                <h3 style={{fontSize:12,fontWeight:600,color:tx.text,marginBottom:12}}>Measurement plan</h3>
+                <DRow k="Primary KPI" v={AGENT5_DATA.measurement_plan.primary_kpi} vc={tx.green}/>
+                <DRow k="Reporting cadence" v={AGENT5_DATA.measurement_plan.reporting_cadence}/>
+                <DRow k="Holdout group" v="Recommended" vc="#10b981"/>
+                <div style={{marginTop:10}}>
+                  <div style={{fontSize:10,color:tx.mut,textTransform:"uppercase",letterSpacing:"0.06em",marginBottom:6}}>Secondary KPIs</div>
+                  <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
+                    {AGENT5_DATA.measurement_plan.secondary_kpis.map((k,i)=>(
+                      <span key={i} style={{fontSize:10,padding:"2px 8px",borderRadius:8,background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.1)",color:tx.sub}}>{k}</span>
+                    ))}
+                  </div>
+                </div>
+              </GCard>
+            </div>
+          </div>
+        )}
+
         {/* ── CAMPAIGN ── */}
         {sec==="campaign"&&(
           <div key="cam" className="fu">
             <h1 style={{fontSize:22,fontWeight:700,letterSpacing:"-0.02em",marginBottom:4}}>Campaign performance</h1>
-            <p style={{fontSize:13,color:tx.sub,marginBottom:18}}>KOA-SPRING-REAWAKENING-2026 · Two-sample t-test · p=0.000 · 95% CI [16.17%, 21.83%] · Click any metric</p>
+            <p style={{fontSize:13,color:tx.sub,marginBottom:18}}>KOA-SPRING-REAWAKENING-2026 · Two-sample t-test · p=0.000 · 95% CI [16.17%, 21.83%]</p>
             <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:11,marginBottom:14}}>
               {[
                 {l:"Booking lift",v:"19.0%",c:tx.green,modal:{title:"Booking lift · 19.0%",context:"Pre vs post campaign",color:tx.green,
-                  insight:"Pre-campaign: 12,500 bookings. Post-campaign: 14,875 bookings. Absolute lift: 2,375 incremental bookings. p=0.000 confirms statistical significance.",
+                  insight:"Pre-campaign: 12,500 bookings. Post-campaign: 14,875 bookings. Absolute lift: 2,375 incremental bookings.",
                   metrics:[["Pre-campaign","12,500"],["Post-campaign","14,875"],["Absolute lift","2,375"],["Lift %","19.0%"],["CI lower","16.17%"],["CI upper","21.83%"]]}},
                 {l:"Campaign ROI",v:"972.5%",c:KOA_YELLOW,modal:{title:"ROI · 972.5%",context:"$45K cost vs $482K revenue",color:KOA_YELLOW,
-                  insight:"$45,000 campaign cost generated $482,625 in attributed revenue. ROI factor: 9.725×. Conservative 0.70 attribution applied.",
+                  insight:"$45,000 campaign cost generated $482,625 in attributed revenue.",
                   metrics:[["Campaign cost","$45,000"],["Gross revenue","$742,875"],["Attributed (0.70)","$482,625"],["ROI factor","9.725×"],["ROI %","972.5%"],["Net profit","$437,625"]]}},
                 {l:"Pre-campaign",v:"12,500",c:tx.sub,modal:{title:"Pre-campaign baseline · 12,500",context:"90-day control window",color:tx.blue,
-                  insight:"Baseline booking count over equivalent 90-day pre-campaign window, used as control group for two-sample t-test.",
+                  insight:"Baseline booking count over equivalent 90-day pre-campaign window.",
                   metrics:[["Booking window","90-day pre-campaign"],["Baseline count","12,500"],["Avg rev/booking","$250"],["Total baseline","$3,125,000"],["Control group","Statistical holdout"],["Data source","KampSightDB Reservations"]]}},
                 {l:"Post-campaign",v:"14,875",c:tx.blue,modal:{title:"Post-campaign result · 14,875",context:"90-day post-launch window",color:tx.blue,
-                  insight:"14,875 total bookings against 12,500 baseline = 19% lift. Peak in Loyal Enthusiasts and New Explorer segments.",
+                  insight:"14,875 total bookings against 12,500 baseline = 19% lift.",
                   metrics:[["Post-campaign","14,875"],["Incremental","2,375 bookings"],["Lift %","19.0%"],["Best segment","Loyal Enthusiasts (32% open)"],["Email opens","62,125"],["SMS reads","38,500"]]}},
               ].map(m=>(
                 <GCard key={m.l} onClick={()=>open("camp_metric",m.modal)} accent={m.c} style={{padding:"20px 16px"}}>
@@ -1480,19 +1640,15 @@ export default function App(){
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12}}>
               <GCard style={{padding:"18px 16px"}}>
                 <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:13}}>
-                  <ChBadge ch="Email"/>
-                  <span style={{fontSize:13,fontWeight:600,color:tx.text}}>Email channel</span>
+                  <ChBadge ch="Email"/><span style={{fontSize:13,fontWeight:600,color:tx.text}}>Email channel</span>
                 </div>
                 {[["Sent","250,000"],["Delivered","248,500"],["Opened","62,125"],["Clicked","8,450"],["Open rate","25.0%"],["CTR","3.4%"],["Delivery rate","99.4%"]].map(([k,v])=><DRow key={k} k={k} v={v}/>)}
-                <div style={{marginTop:9,fontSize:10,color:tx.mut}}>Loyal Enthusiasts (120K) + New Explorers (130K)</div>
               </GCard>
               <GCard style={{padding:"18px 16px"}}>
                 <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:13}}>
-                  <ChBadge ch="SMS"/>
-                  <span style={{fontSize:13,fontWeight:600,color:tx.text}}>SMS channel</span>
+                  <ChBadge ch="SMS"/><span style={{fontSize:13,fontWeight:600,color:tx.text}}>SMS channel</span>
                 </div>
                 {[["Sent","45,000"],["Delivered","44,100"],["Read","38,500"],["Engaged","5,200"],["Read rate","87.3%"],["Engage rate","11.6%"],["Delivery rate","98.0%"]].map(([k,v])=><DRow key={k} k={k} v={v}/>)}
-                <div style={{marginTop:9,fontSize:10,color:tx.mut}}>ZingleStaging · via KampSightDB SMS routing</div>
               </GCard>
               <GCard style={{padding:"18px 16px"}}>
                 <h3 style={{fontSize:13,fontWeight:600,color:tx.text,marginBottom:13}}>Sentiment & validity</h3>
@@ -1535,18 +1691,13 @@ export default function App(){
                   onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.04)"}
                   onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
                   <div style={{width:180,fontSize:12,color:tx.sub,flexShrink:0}}>{l.tier}</div>
-                  <div style={{flex:1}}>
-                    <div className="bar-track"><div className="bar-fill" style={{width:`${l.pct*1.6}%`,background:`linear-gradient(90deg,${l.color},${l.color}70)`}}/></div>
-                  </div>
+                  <div style={{flex:1}}><div className="bar-track"><div className="bar-fill" style={{width:`${l.pct*1.6}%`,background:`linear-gradient(90deg,${l.color},${l.color}70)`}}/></div></div>
                   <div style={{width:90,textAlign:"right",fontSize:12,fontWeight:700,color:l.color,fontFamily:"'DM Mono',monospace",flexShrink:0}}>{l.count}</div>
                   <div style={{width:36,textAlign:"right",fontSize:11,color:tx.mut,fontFamily:"'DM Mono',monospace",flexShrink:0}}>{l.pct}%</div>
                   <div style={{width:80,textAlign:"right",fontSize:11,color:tx.sub,flexShrink:0}}>{l.nights} nights</div>
                   <span style={{fontSize:11,color:tx.mut,flexShrink:0}}>→</span>
                 </div>
               ))}
-              <div style={{marginTop:10,padding:"12px 14px",borderRadius:10,background:KOA_YELLOW+"10",border:`1px solid ${KOA_YELLOW}25`,fontSize:12,color:tx.sub,lineHeight:1.7}}>
-                <strong style={{color:KOA_YELLOW}}>Champion insight:</strong> 4.7% of guests (142,609) generate 22.3% of all camper nights (8.76M). Average 61 nights per career. Existential threat if this segment churns.
-              </div>
             </GCard>
             <GCard style={{padding:"20px 22px"}}>
               <h3 style={{fontSize:14,fontWeight:600,color:tx.text,marginBottom:14}}>Unique guest erosion · 2022–2025</h3>
@@ -1558,9 +1709,6 @@ export default function App(){
                   </div>
                 ))}
               </div>
-              <p style={{fontSize:12,color:tx.sub,lineHeight:1.6}}>
-                <span style={{fontWeight:700,color:KOA_RED,fontFamily:"'DM Mono',monospace"}}>−22.3%</span> decline 2022–2025 · At −8%/yr → sub-1M unique guests by 2027. Reactivating 5% of 300K+ lapsed guests = $6.75M.
-              </p>
             </GCard>
           </div>
         )}
@@ -1595,20 +1743,6 @@ export default function App(){
                 </GCard>
               ))}
             </div>
-            <GCard style={{padding:"18px 20px"}}>
-              <h3 style={{fontSize:13,fontWeight:600,color:tx.text,marginBottom:12}}>Revenue premium analysis</h3>
-              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10}}>
-                {[{l:"Cabin vs RV premium",v:"51%",c:tx.green,s:"$385.99 vs $255.53/res"},
-                  {l:"Cabin vs Tent premium",v:"252%",c:KOA_YELLOW,s:"$385.99 vs $109.62/res"},
-                  {l:"Oct–Nov cabin floor",v:"23K",c:tx.blue,s:"vs tent 16K — off-season resilience"}].map(m=>(
-                  <div key={m.l} style={{padding:"14px",borderRadius:12,background:m.c+"10",border:`1px solid ${m.c}22`}}>
-                    <div style={{fontSize:11,color:tx.sub,marginBottom:5}}>{m.l}</div>
-                    <div style={{fontSize:22,fontWeight:700,color:m.c}}>{m.v}</div>
-                    <div style={{fontSize:10,color:tx.mut,marginTop:3}}>{m.s}</div>
-                  </div>
-                ))}
-              </div>
-            </GCard>
           </div>
         )}
 
@@ -1624,9 +1758,9 @@ export default function App(){
         borderTop:dark?"1px solid rgba(255,255,255,0.07)":"1px solid rgba(0,0,0,0.07)",
         display:"flex",alignItems:"center",padding:"0 22px",gap:24,
         fontSize:10,color:tx.mut,fontFamily:"'DM Mono',monospace",letterSpacing:"0.04em"}}>
-        <span style={{color:tx.green}}>● AGENTS 1–4 COMPLETE</span>
+        <span style={{color:tx.green}}>● AGENTS 1–5 COMPLETE</span>
         <span>10.9M RESERVATIONS · 518 CAMPGROUNDS</span>
-        <span>655K VKR MEMBERS · AGENTS 5–6 PENDING</span>
+        <span>8 PERSONAS ORCHESTRATED · AGENT 6 PENDING</span>
         <span style={{marginLeft:"auto"}}>AIRIA GUEST SEGMENTATION v2.0 · GSU CIS-8010 · {new Date().toLocaleDateString()}</span>
       </div>
 
