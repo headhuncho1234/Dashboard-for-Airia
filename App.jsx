@@ -1759,7 +1759,7 @@ export default function App(){
 
   return(
     <div style={{minHeight:"100vh",color:tx.text,fontFamily:"'DM Sans',system-ui,sans-serif",position:"relative",
-      backgroundImage:`url("https://koa.com/content/campgrounds/toccoa-river/photos/0be94425-9bc5-45d8-8574-c5030228cea3photo8089cf86-afb9-4fe9-b862-4f551115d886.jpeg.axd?preset=campgroundphoto")`,
+      backgroundImage:`url("https://koa.com/content/campgrounds/toccoa-river/heroitems/10157heroitems33ee7944-7d62-4035-b7ba-40b887feab85.jpg?preset=hero-lg")`,
       backgroundSize:"cover",backgroundPosition:"center top",backgroundAttachment:"fixed",backgroundRepeat:"no-repeat"}}>
       {/* Mountain overlay */}
       <div style={{position:"fixed",inset:0,zIndex:0,
