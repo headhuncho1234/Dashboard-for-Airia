@@ -481,7 +481,12 @@ function GCard({children,style,onClick,accent,className=""}){
     <div onClick={onClick}
       className={`glass ${className} ${onClick?"clickable":""}`}
       style={{
-        borderColor: accent ? `${accent}40` : undefined,
+        background:"rgba(10,16,32,0.68)",
+        backdropFilter:"blur(20px)",
+        WebkitBackdropFilter:"blur(20px)",
+        border:`1px solid rgba(255,255,255,0.10)`,
+        borderColor: accent ? `${accent}40` : "rgba(255,255,255,0.10)",
+        borderRadius:14,
         cursor: onClick?"pointer":"default",
         ...style,
       }}>
@@ -1686,7 +1691,7 @@ export default function App(){
   const open=useCallback((type,item)=>setModal({type,item}),[]);
   const{agentData,setAgentData,loading,errors,setErrors,runAgent}=useAiriaAgent();
 
-  useEffect(()=>{ document.body.className=dark?"":"light-mode"; },[dark]);
+  useEffect(()=>{ document.body.className=""; },[dark]);
   useEffect(()=>{ const t=setInterval(()=>setTime(new Date()),1000); return()=>clearInterval(t); },[]);
 
   const r=useCounter(10893242,2200,100);
@@ -1698,8 +1703,8 @@ export default function App(){
 
   const tx=dark?{text:"#f1f5f9",sub:"rgba(255,255,255,0.50)",mut:"rgba(255,255,255,0.32)",
     acc:KOA_YELLOW,red:KOA_RED,green:"#10b981",blue:"#3b82f6",pur:"#8b5cf6"}
-    :{text:"#0f172a",sub:"rgba(0,0,0,0.55)",mut:"rgba(0,0,0,0.38)",
-    acc:KOA_YELLOW,red:KOA_RED,green:"#059669",blue:"#2563eb",pur:"#7c3aed"};
+    :{text:"#f1f5f9",sub:"rgba(255,255,255,0.55)",mut:"rgba(255,255,255,0.35)",
+    acc:KOA_YELLOW,red:KOA_RED,green:"#10b981",blue:"#3b82f6",pur:"#8b5cf6"};
 
   const NAV=[
     {id:"overview",l:"Overview"},{id:"signals",l:"Signals"},{id:"pipeline",l:"Pipeline"},
@@ -1765,12 +1770,12 @@ export default function App(){
       <div style={{position:"fixed",inset:0,zIndex:0,
         background:dark
           ? "linear-gradient(180deg,rgba(6,12,26,0.88) 0%,rgba(6,12,26,0.82) 40%,rgba(6,12,26,0.92) 100%)"
-          : "linear-gradient(180deg,rgba(240,220,210,0.88) 0%,rgba(240,220,210,0.80) 40%,rgba(240,220,210,0.92) 100%)"
+          : "linear-gradient(180deg,rgba(15,23,42,0.82) 0%,rgba(15,23,42,0.78) 40%,rgba(15,23,42,0.88) 100%)"
       }}/>
 
       {/* HEADER */}
       <header style={{position:"sticky",top:0,zIndex:200,
-        background:dark?"rgba(4,8,20,0.75)":"rgba(240,220,210,0.78)",
+        background:dark?"rgba(4,8,20,0.75)":"rgba(4,8,20,0.72)",
         backdropFilter:"blur(32px) saturate(180%)",WebkitBackdropFilter:"blur(32px) saturate(180%)",
         borderBottom:dark?"1px solid rgba(255,255,255,0.08)":"1px solid rgba(0,0,0,0.09)",
         height:56,display:"flex",alignItems:"center",padding:"0 22px",gap:14}}>
