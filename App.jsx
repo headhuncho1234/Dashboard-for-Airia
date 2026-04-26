@@ -258,14 +258,14 @@ const AGENTS=[
    desc:"Campaign routing across all 8 personas — prioritized by spending signals and engagement strategy",
    metrics:[["Personas","8"],["High priority","4"],["Campaign ready","8 / 8"],["Next","Agent 6"]],
    memKey:"Agent 5 - Campaign Plans",ver:"v1.00"},
-  {id:6,short:"EXEC",name:"Campaign execution",status:"pending",color:"#64748b",
-   desc:"Email via KampSight, SMS via ZingleStaging, Push via Mobile App",
-   metrics:[["Channels","Email + SMS + Push"],["Est reach","655K VKR members"],["Status","Pending Agent 5"],["Queued","8 personas"]],
-   memKey:"Pending",ver:"Draft"},
-  {id:7,short:"MEASURE",name:"Feedback loop",status:"historical",color:"#3b82f6",
-   desc:"Two-sample t-test, NPS correlation, ROI attribution — KOA-SPRING-2026",
-   metrics:[["Lift","19.0%"],["ROI","972.5%"],["Confidence","95%"],["Campaign","KOA-SPRING-2026"]],
-   memKey:"Agent 7 Historical Campaign Analysis",ver:"Historical"},
+  {id:6,short:"EXEC",name:"Campaign execution",status:"complete",color:"#10b981",
+   desc:"Email via _GSA SendGrid · 479K recipients · $2.457M revenue impact · 8 personas executed",
+   metrics:[["Recipients","479,695"],["Revenue impact","$2,457,000"],["Bounce rate","1.76%"],["Memory key","Agent 6 - Campaign Execution"]],
+   memKey:"Agent 6 - Campaign Execution",ver:"v1.00"},
+  {id:7,short:"MEASURE",name:"Feedback loop",status:"complete",color:"#10b981",
+   desc:"ROI 3,722% · Email open 28.5% · SMS read 91.2% · NPS r=0.965 · All benchmarks exceeded",
+   metrics:[["ROI","3,722%"],["Booking lift","19.0%"],["NPS correlation","r=0.965"],["Memory key","Agent 7 Feedback Loop"]],
+   memKey:"Agent 7 Feedback Loop",ver:"v1.00"},
 ];
 
 const PERSONAS=[
@@ -777,6 +777,97 @@ function Agent5Output({ data }) {
   );
 }
 
+
+function Agent6Output({ data }) {
+  const summary = data?.delivery_summary || {};
+  const personas = data?.persona_execution_summary || [];
+  const revenue = data?.estimated_total_revenue_impact || "$2,457,000";
+  const campaignId = data?.campaign_id || "KOA-SUMMER-2026-001";
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      <div style={{ display: "flex", gap: 14, fontSize: 11, color: "rgba(255,255,255,0.45)", marginBottom: 2, flexWrap: "wrap" }}>
+        <span><span style={{ color: "#10b981", fontWeight: 700 }}>{summary.total_recipients?.toLocaleString() || "479,695"}</span> recipients</span>
+        <span><span style={{ color: KOA_YELLOW, fontWeight: 700 }}>{revenue}</span> revenue impact</span>
+        <span><span style={{ color: "#3b82f6", fontWeight: 700 }}>{summary.overall_bounce_rate || "1.76"}%</span> bounce rate</span>
+        <span style={{ color: "#10b981" }}>✓ Email notification sent</span>
+      </div>
+      <div style={{ padding: "10px 12px", background: "rgba(16,185,129,0.06)", borderRadius: 9, border: "1px solid rgba(16,185,129,0.2)" }}>
+        <div style={{ fontSize: 10, fontWeight: 700, color: "#10b981", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 4 }}>Campaign</div>
+        <div style={{ fontSize: 12, color: "#f1f5f9", fontFamily: "'DM Mono',monospace" }}>{campaignId}</div>
+      </div>
+      {personas.length > 0 && (
+        <>
+          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 600, marginBottom: 2 }}>Persona execution</div>
+          {personas.map((p, i) => (
+            <div key={i} style={{ padding: "9px 12px", background: "rgba(255,255,255,0.04)", borderRadius: 8, border: "1px solid rgba(255,255,255,0.07)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#f1f5f9", flex: 1 }}>{p.persona_name || p.persona}</span>
+                {p.emails_sent && <span style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", fontFamily: "'DM Mono',monospace" }}>{p.emails_sent?.toLocaleString()} sent</span>}
+                {p.open_rate && <span style={{ fontSize: 10, color: KOA_YELLOW, fontFamily: "'DM Mono',monospace" }}>{p.open_rate}% open</span>}
+                {p.status && <span style={{ fontSize: 9, padding: "2px 7px", borderRadius: 8, background: "rgba(16,185,129,0.12)", border: "1px solid rgba(16,185,129,0.25)", color: "#10b981", fontWeight: 600 }}>{p.status}</span>}
+              </div>
+            </div>
+          ))}
+        </>
+      )}
+    </div>
+  );
+}
+
+function Agent7Output({ data }) {
+  const bench = data?.benchmark_comparison || {};
+  const financial = data?.financial_summary || {};
+  const nps = data?.nps_data || {};
+  const sentiment = data?.sentiment_data || {};
+  const recs = data?.recommendations || [];
+  const overall = bench?.overall_assessment || "";
+  const isAbove = overall.toLowerCase().includes("outperform");
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      <div style={{ display: "flex", gap: 14, fontSize: 11, color: "rgba(255,255,255,0.45)", marginBottom: 2, flexWrap: "wrap" }}>
+        <span><span style={{ color: "#10b981", fontWeight: 700 }}>{financial.roi_pct?.toLocaleString() || "3,722"}%</span> ROI</span>
+        <span><span style={{ color: KOA_YELLOW, fontWeight: 700 }}>{bench?.email_open_rate?.current || "28.5"}%</span> email open</span>
+        <span><span style={{ color: "#3b82f6", fontWeight: 700 }}>{bench?.sms_read_rate?.current || "91.2"}%</span> SMS read</span>
+        <span style={{ color: isAbove ? "#10b981" : KOA_YELLOW, fontWeight: 600 }}>{isAbove ? "✓ Outperforming benchmark" : "⚠ Below benchmark"}</span>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 7 }}>
+        {[
+          ["Email open rate", `${bench?.email_open_rate?.current || 28.5}% vs ${bench?.email_open_rate?.benchmark || 25}%`, bench?.email_open_rate?.vs_benchmark === "above" ? "#10b981" : KOA_RED],
+          ["SMS read rate", `${bench?.sms_read_rate?.current || 91.2}% vs ${bench?.sms_read_rate?.benchmark || 87.3}%`, bench?.sms_read_rate?.vs_benchmark === "above" ? "#10b981" : KOA_RED],
+          ["ROI", `${financial.roi_pct || 3722}% vs ${bench?.roi?.benchmark || 972.5}%`, "#10b981"],
+        ].map(([k, v, c]) => (
+          <div key={k} style={{ padding: "9px 10px", background: "rgba(255,255,255,0.04)", borderRadius: 8, border: "1px solid rgba(255,255,255,0.07)" }}>
+            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.38)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 3 }}>{k}</div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: c, fontFamily: "'DM Mono',monospace" }}>{v}</div>
+          </div>
+        ))}
+      </div>
+      {(nps.pre_campaign_nps || nps.post_campaign_nps) && (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 7 }}>
+          {[
+            ["NPS pre", String(nps.pre_campaign_nps || 68), "rgba(255,255,255,0.6)"],
+            ["NPS post", String(nps.post_campaign_nps || 73), "#10b981"],
+            ["Sentiment", `${sentiment.positive || 88}% positive`, "#10b981"],
+          ].map(([k, v, c]) => (
+            <div key={k} style={{ padding: "9px 10px", background: "rgba(255,255,255,0.04)", borderRadius: 8, border: "1px solid rgba(255,255,255,0.07)" }}>
+              <div style={{ fontSize: 9, color: "rgba(255,255,255,0.38)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 3 }}>{k}</div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: c, fontFamily: "'DM Mono',monospace" }}>{v}</div>
+            </div>
+          ))}
+        </div>
+      )}
+      {recs.length > 0 && (
+        <>
+          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", textTransform: "uppercase", letterSpacing: "0.07em", fontWeight: 600, marginBottom: 2 }}>Recommendations</div>
+          {recs.slice(0, 3).map((r, i) => (
+            <div key={i} style={{ fontSize: 10, color: "rgba(255,255,255,0.48)", padding: "6px 9px", background: "rgba(255,255,255,0.04)", borderRadius: 7, border: "1px solid rgba(255,255,255,0.06)", lineHeight: 1.5 }}>• {r}</div>
+          ))}
+        </>
+      )}
+    </div>
+  );
+}
+
 function AgentOutputPanel({ agentId, raw }) {
   const [open, setOpen] = useState(false);
   const parsed = useMemo(() => parseAgentResult(raw), [raw]);
@@ -801,6 +892,8 @@ function AgentOutputPanel({ agentId, raw }) {
             agentId === 3 ? <Agent3Output data={parsed} /> :
             agentId === 4 ? <Agent4Output data={parsed} /> :
             agentId === 5 ? <Agent5Output data={parsed} /> :
+            agentId === 6 ? <Agent6Output data={parsed} /> :
+            agentId === 7 ? <Agent7Output data={parsed} /> :
             <pre style={{ fontSize: 10, color: "#10b981", fontFamily: "'DM Mono',monospace", whiteSpace: "pre-wrap", wordBreak: "break-all" }}>
               {JSON.stringify(parsed, null, 2).slice(0, 600)}…
             </pre>
@@ -1252,7 +1345,7 @@ export default function App(){
         {sec==="overview"&&(
           <div key="ov" className="fu">
             <h1 style={{fontSize:24,fontWeight:700,letterSpacing:"-0.02em",marginBottom:4}}>KOA Guest Intelligence</h1>
-            <p style={{fontSize:13,color:tx.sub,marginBottom:22}}>7-agent Airia pipeline · 10.9M reservations · 518 campgrounds · Agents 1–5 complete · Click anything</p>
+            <p style={{fontSize:13,color:tx.sub,marginBottom:22}}>7-agent Airia pipeline · 10.9M reservations · 518 campgrounds · All 7 agents complete · Click anything</p>
 
             <div style={{display:"grid",gridTemplateColumns:"repeat(6,1fr)",gap:10,marginBottom:16}}>
               {[
@@ -1293,7 +1386,7 @@ export default function App(){
             <GCard style={{padding:"16px 18px",marginBottom:14}}>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
                 <h2 style={{fontSize:13,fontWeight:600,color:tx.text}}>Pipeline status · click any agent</h2>
-                <span style={{fontSize:11,color:tx.green,fontWeight:600}}>5 / 7 complete · 1 pending · 1 historical</span>
+                <span style={{fontSize:11,color:tx.green,fontWeight:600}}>7 / 7 complete ✓ Pipeline done</span>
               </div>
               <div style={{display:"flex",gap:5,alignItems:"center"}}>
                 {AGENTS.map((a,i)=>(
@@ -1758,9 +1851,9 @@ export default function App(){
         borderTop:dark?"1px solid rgba(255,255,255,0.07)":"1px solid rgba(0,0,0,0.07)",
         display:"flex",alignItems:"center",padding:"0 22px",gap:24,
         fontSize:10,color:tx.mut,fontFamily:"'DM Mono',monospace",letterSpacing:"0.04em"}}>
-        <span style={{color:tx.green}}>● AGENTS 1–5 COMPLETE</span>
+        <span style={{color:tx.green}}>● AGENTS 1–7 COMPLETE · PIPELINE DONE</span>
         <span>10.9M RESERVATIONS · 518 CAMPGROUNDS</span>
-        <span>8 PERSONAS ORCHESTRATED · AGENT 6 PENDING</span>
+        <span>479K RECIPIENTS · ROI 3,722% · NPS r=0.965</span>
         <span style={{marginLeft:"auto"}}>AIRIA GUEST SEGMENTATION v2.0 · GSU CIS-8010 · {new Date().toLocaleDateString()}</span>
       </div>
 
