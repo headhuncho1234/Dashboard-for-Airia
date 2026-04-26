@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAiriaAgent } from "./useAiriaAgent";
+import { Analytics } from "@vercel/analytics/react";
 // ─── KOA BRAND ───────────────────────────────────────────────────────────────
 const KOA_RED    = "#E8112D";
 const KOA_YELLOW = "#FFCC00";
@@ -1858,6 +1859,7 @@ export default function App(){
       </div>
 
       <Modal modal={modal} onClose={()=>setModal(null)}/>
+      <Analytics />
     </div>
   );
 }
