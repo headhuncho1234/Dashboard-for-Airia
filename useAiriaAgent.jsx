@@ -1,0 +1,48 @@
+import { useState, useCallback } from "react";
+
+const AGENT_IDS = {
+  1: "6c30db8e-f89f-463c-a724-30b4b2971d5c",
+  2: "7be970e3-cdef-42c8-be4b-ae8664d2afe2",
+  3: "ac8a9a6d-3688-4b1f-a9cd-5f35f2caa770",
+  4: "f05848cf-0e05-4cfa-b704-a789757a6548",
+  5: "197b7527-226d-46ce-a79e-1f97b3108aa4",
+  6: "6c9002a0-7b57-415a-bc83-9e547c08f94e",
+  7: "d50a4471-9198-48ae-8072-3bfef9d83b73",
+};
+
+export function useAiriaAgent() {
+  const [agentData, setAgentData] = useState({});
+  const [loading, setLoading]   = useState({});
+  const [errors,  setErrors]    = useState({});
+
+  const runAgent = useCallback(async (agentId) => {
+    const pipelineId = AGENT_IDS[agentId];
+    if (!pipelineId) {
+      setErrors(e => ({ ...e, [agentId]: "No pipeline ID for agent " + agentId }));
+      return;
+    }
+    setLoading(l => ({ ...l, [agentId]: true }));
+    setErrors(e => ({ ...e, [agentId]: null }));
+    try {
+      const res = await fetch("/api/run-agent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ agentId: pipelineId, userInput: "run" }),
+      });
+      if (!res.ok) {
+        throw new Error("HTTP " + res.status + " — " + res.statusText);
+      }
+      const raw = await res.json();
+      if (raw.success === false) {
+        throw new Error(raw.error || "Agent returned failure");
+      }
+      setAgentData(d => ({ ...d, [agentId]: raw }));
+    } catch (err) {
+      setErrors(e => ({ ...e, [agentId]: err.message }));
+    } finally {
+      setLoading(l => ({ ...l, [agentId]: false }));
+    }
+  }, []);
+
+  return { agentData, loading, errors, runAgent };
+}
