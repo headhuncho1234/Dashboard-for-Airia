@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAiriaAgent } from "./useAiriaAgent.jsx";
+import { MOUNTAIN_BG, KOA_LOGO } from "./assets.js";
 import { Analytics } from "@vercel/analytics/react";
 // ─── KOA BRAND ───────────────────────────────────────────────────────────────
 const KOA_RED    = "#E8112D";
@@ -1758,7 +1759,7 @@ export default function App(){
 
   return(
     <div style={{minHeight:"100vh",color:tx.text,fontFamily:"'DM Sans',system-ui,sans-serif",position:"relative",
-      backgroundImage:`url("https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1920&q=80&fit=crop")`,
+      backgroundImage:`url(${MOUNTAIN_BG})`,
       backgroundSize:"cover",backgroundPosition:"center top",backgroundAttachment:"fixed",backgroundRepeat:"no-repeat"}}>
       {/* Mountain overlay */}
       <div style={{position:"fixed",inset:0,zIndex:0,
@@ -1775,9 +1776,9 @@ export default function App(){
         height:56,display:"flex",alignItems:"center",padding:"0 22px",gap:14}}>
 
         <div style={{display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
-          <img src="https://koa.com/images/design/koa-logo.svg"
+          <img src={KOA_LOGO}
             onError={e=>{e.target.style.display="none";e.target.nextSibling.style.display="flex";}}
-            style={{height:32,width:"auto",objectFit:"contain",filter:"brightness(0) invert(1)"}}
+            style={{height:32,width:"auto",objectFit:"contain"}}
             alt="KOA logo"/>
           <div style={{display:"none",width:32,height:32,borderRadius:8,
             background:`linear-gradient(135deg,${KOA_RED},#b0000e)`,
