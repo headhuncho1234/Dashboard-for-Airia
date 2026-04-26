@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useAiriaAgent } from "./useAiriaAgent.jsx";
-import { MOUNTAIN_BG, KOA_LOGO } from "./assets.js";
+import { KOA_LOGO } from "./assets.js";
 import { Analytics } from "@vercel/analytics/react";
 // ─── KOA BRAND ───────────────────────────────────────────────────────────────
 const KOA_RED    = "#E8112D";
@@ -1759,7 +1759,7 @@ export default function App(){
 
   return(
     <div style={{minHeight:"100vh",color:tx.text,fontFamily:"'DM Sans',system-ui,sans-serif",position:"relative",
-      backgroundImage:`url(${MOUNTAIN_BG})`,
+      backgroundImage:`url("https://images.unsplash.com/photo-1615655114865-4cc1bce1acdd?w=2560&q=95&fit=crop&auto=format")`,
       backgroundSize:"cover",backgroundPosition:"center top",backgroundAttachment:"fixed",backgroundRepeat:"no-repeat"}}>
       {/* Mountain overlay */}
       <div style={{position:"fixed",inset:0,zIndex:0,
