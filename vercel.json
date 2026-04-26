@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/run-agent.js": {
-      "maxDuration": 60
+      "maxDuration": 300
     }
   }
 }
