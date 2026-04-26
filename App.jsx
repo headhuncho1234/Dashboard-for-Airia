@@ -1757,21 +1757,33 @@ export default function App(){
     : AGENT5_DATA.campaign_plans.filter(p => p.campaign_priority === orchFilter);
 
   return(
-    <div style={{minHeight:"100vh",color:tx.text,fontFamily:"'DM Sans',system-ui,sans-serif",position:"relative"}}>
+    <div style={{minHeight:"100vh",color:tx.text,fontFamily:"'DM Sans',system-ui,sans-serif",position:"relative",
+      backgroundImage:`url("https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1920&q=80&fit=crop")`,
+      backgroundSize:"cover",backgroundPosition:"center top",backgroundAttachment:"fixed",backgroundRepeat:"no-repeat"}}>
+      {/* Mountain overlay */}
+      <div style={{position:"fixed",inset:0,zIndex:0,
+        background:dark
+          ? "linear-gradient(180deg,rgba(6,12,26,0.88) 0%,rgba(6,12,26,0.82) 40%,rgba(6,12,26,0.92) 100%)"
+          : "linear-gradient(180deg,rgba(240,220,210,0.88) 0%,rgba(240,220,210,0.80) 40%,rgba(240,220,210,0.92) 100%)"
+      }}/>
 
       {/* HEADER */}
       <header style={{position:"sticky",top:0,zIndex:200,
-        background:dark?"rgba(6,12,26,0.80)":"rgba(240,220,210,0.82)",
+        background:dark?"rgba(4,8,20,0.75)":"rgba(240,220,210,0.78)",
         backdropFilter:"blur(32px) saturate(180%)",WebkitBackdropFilter:"blur(32px) saturate(180%)",
         borderBottom:dark?"1px solid rgba(255,255,255,0.08)":"1px solid rgba(0,0,0,0.09)",
         height:56,display:"flex",alignItems:"center",padding:"0 22px",gap:14}}>
 
         <div style={{display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
-          <div style={{width:30,height:30,borderRadius:8,
+          <img src="https://koa.com/images/design/koa-logo.svg"
+            onError={e=>{e.target.style.display="none";e.target.nextSibling.style.display="flex";}}
+            style={{height:32,width:"auto",objectFit:"contain",filter:"brightness(0) invert(1)"}}
+            alt="KOA logo"/>
+          <div style={{display:"none",width:32,height:32,borderRadius:8,
             background:`linear-gradient(135deg,${KOA_RED},#b0000e)`,
-            display:"flex",alignItems:"center",justifyContent:"center",
-            fontWeight:800,fontSize:13,color:"#fff",
-            boxShadow:`0 4px 14px ${KOA_RED}50`}}>K</div>
+            alignItems:"center",justifyContent:"center",
+            fontWeight:900,fontSize:12,color:"#fff",letterSpacing:"0.05em",
+            boxShadow:`0 4px 14px ${KOA_RED}50`}}>KOA</div>
           <div>
             <div style={{fontSize:13,fontWeight:700,color:tx.text,letterSpacing:"0.01em"}}>KOA Analytics</div>
             <div style={{fontSize:9,color:tx.mut,letterSpacing:"0.07em",textTransform:"uppercase"}}>Guest Segmentation · GSU CIS-8010</div>
@@ -1807,7 +1819,7 @@ export default function App(){
       </header>
 
       {/* MAIN */}
-      <main style={{position:"relative",zIndex:1,padding:"24px 22px 64px",maxWidth:1380,margin:"0 auto"}}>
+      <main style={{position:"relative",zIndex:1,padding:"24px 22px 64px",maxWidth:1380,margin:"0 auto",paddingTop: "24px"}}>
 
         {!kpiDismissed && <KPIAlertBanner onDismiss={()=>setKpiDismissed(true)} tx={tx}/>}
       {caseStudyOpen && <CaseStudyModal slide={caseStudySlide} onSlide={setCaseStudySlide} onClose={()=>setCaseStudyOpen(false)}/>}
