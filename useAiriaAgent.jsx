@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 
 const AGENT_IDS = {
-const AGENT_IDS = {
   1: "6c30db8e-f89f-463c-a724-30b4b2971d5c",
   2: "7be970e3-cdef-42c8-be4b-ae8664d2afe2",
   3: "ac8a9a6d-3688-4b1f-a9cd-5f35f2caa770",
@@ -13,8 +12,8 @@ const AGENT_IDS = {
 
 export function useAiriaAgent() {
   const [agentData, setAgentData] = useState({});
-  const [loading, setLoading]   = useState({});
-  const [errors,  setErrors]    = useState({});
+  const [loading, setLoading]     = useState({});
+  const [errors,  setErrors]      = useState({});
 
   const runAgent = useCallback(async (agentId) => {
     const pipelineId = AGENT_IDS[agentId];
