@@ -1759,7 +1759,7 @@ export default function App(){
 
   return(
     <div style={{minHeight:"100vh",color:tx.text,fontFamily:"'DM Sans',system-ui,sans-serif",position:"relative",
-      backgroundImage:`url("https://images.unsplash.com/photo-1615655114865-4cc1bce1acdd?w=2560&q=95&fit=crop&auto=format")`,
+      backgroundImage:`url("https://blueridge-2022.s3.amazonaws.com/images/TEMP-bg-mtns.jpg?v=1655240982")`,
       backgroundSize:"cover",backgroundPosition:"center top",backgroundAttachment:"fixed",backgroundRepeat:"no-repeat"}}>
       {/* Mountain overlay */}
       <div style={{position:"fixed",inset:0,zIndex:0,
