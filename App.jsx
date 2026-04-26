@@ -869,6 +869,345 @@ function Agent7Output({ data }) {
   );
 }
 
+// ─── KPI ALERT BANNER ────────────────────────────────────────────────────────
+function KPIAlertBanner({ onDismiss, tx }) {
+  const alerts = [
+    { metric: "Email CTR", current: "4.2%", benchmark: "3.4%", delta: "+0.8%", status: "above", color: "#10b981" },
+    { metric: "Email Open", current: "28.5%", benchmark: "25.0%", delta: "+3.5%", status: "above", color: "#10b981" },
+    { metric: "SMS Read", current: "91.2%", benchmark: "87.3%", delta: "+3.9%", status: "above", color: "#10b981" },
+    { metric: "ROI", current: "3,722%", benchmark: "972.5%", delta: "+2,749.5%", status: "above", color: "#10b981" },
+  ];
+  return (
+    <div style={{ position: "fixed", top: 56, left: 0, right: 0, zIndex: 190,
+      background: "rgba(16,185,129,0.12)", backdropFilter: "blur(20px)",
+      borderBottom: "1px solid rgba(16,185,129,0.3)", padding: "8px 22px",
+      display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+      <span style={{ fontSize: 10, fontWeight: 700, color: "#10b981", textTransform: "uppercase", letterSpacing: "0.08em", flexShrink: 0 }}>
+        ● All KPIs Beating Benchmark
+      </span>
+      {alerts.map(a => (
+        <div key={a.metric} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 10, flexShrink: 0 }}>
+          <span style={{ color: "rgba(255,255,255,0.45)" }}>{a.metric}</span>
+          <span style={{ color: a.color, fontWeight: 700, fontFamily: "'DM Mono',monospace" }}>{a.current}</span>
+          <span style={{ color: "rgba(255,255,255,0.28)" }}>vs {a.benchmark}</span>
+          <span style={{ color: a.color, fontWeight: 600 }}>({a.delta})</span>
+        </div>
+      ))}
+      <button onClick={onDismiss} style={{ marginLeft: "auto", fontSize: 10, color: "rgba(255,255,255,0.35)",
+        background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", flexShrink: 0 }}>✕ dismiss</button>
+    </div>
+  );
+}
+
+// ─── CASE STUDY MODAL ─────────────────────────────────────────────────────────
+function CaseStudyModal({ slide, onSlide, onClose }) {
+  const slides = [
+    {
+      label: "01 / Problem",
+      title: "KOA's Guest Intelligence Gap",
+      color: "#E8112D",
+      bullets: [
+        "307,670 cancellations in 2025 alone — $3.9M in recoverable revenue leaking annually",
+        "Guest base eroding -22.3% since 2022: 1.39M → 1.08M unique guests",
+        "17.9% KampStore penetration — $7.3M revenue erosion across 518 campgrounds",
+        "655K VKR loyalty members with 276K untiered — completely untapped activation pool",
+        "No unified segmentation layer connecting behavioral data to campaign execution",
+      ],
+      stat: { v: "$140M", l: "LTV at risk" },
+    },
+    {
+      label: "02 / Pipeline",
+      title: "7-Agent Airia AI Pipeline",
+      color: "#FFCC00",
+      bullets: [
+        "AG01 RFM: KampSightDB + VDW → 10 behavioral segments across 500+ guests",
+        "AG02 Signal: Stratified sampling of 10.9M reservations → 5 ranked revenue signals",
+        "AG03 Cluster: K-means + DBSCAN → 6 behavioral clusters for champion identification",
+        "AG04 Persona: AI archetype synthesis → 8 campaign-ready guest personas",
+        "AG05 Orchestrator: Priority routing + channel strategy across all 8 personas",
+        "AG06 Execution: Multi-channel delivery via email, SMS, push → 479K recipients",
+        "AG07 Feedback: Two-sample t-test + NPS correlation + ROI attribution",
+      ],
+      stat: { v: "7", l: "Agents chained" },
+    },
+    {
+      label: "03 / Results",
+      title: "KOA-SUMMER-2026 Campaign Results",
+      color: "#10b981",
+      bullets: [
+        "19.0% booking lift — statistically significant (p=0.000, 95% CI [17.17%, 20.83%])",
+        "ROI 3,722% vs KOA-SPRING-2026 benchmark of 972.5% — 3.8× improvement",
+        "Email open rate 28.5% (+3.5% vs benchmark) · SMS read rate 91.2% (+3.9%)",
+        "NPS correlation r=0.965 — near-perfect engagement-to-satisfaction signal",
+        "88% positive sentiment across 8 personas · 0% negative",
+        "Pipeline complete · ready_for_next_cycle: true",
+      ],
+      stat: { v: "3,722%", l: "Campaign ROI" },
+    },
+  ];
+  const s = slides[slide];
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-inner" onClick={e => e.stopPropagation()} style={{ maxWidth: 640 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
+          <span style={{ fontSize: 10, fontWeight: 700, color: s.color, textTransform: "uppercase", letterSpacing: "0.1em",
+            padding: "3px 10px", borderRadius: 20, background: s.color + "18", border: `1px solid ${s.color}35` }}>{s.label}</span>
+          <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.08)" }} />
+          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.28)" }}>KOA Guest Segmentation · GSU CIS-8010</span>
+        </div>
+        <h2 style={{ fontSize: 22, fontWeight: 700, color: "#f1f5f9", marginBottom: 20, letterSpacing: "-0.02em" }}>{s.title}</h2>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
+          {s.bullets.map((b, i) => (
+            <div key={i} style={{ display: "flex", gap: 10, fontSize: 13, color: "rgba(255,255,255,0.62)", lineHeight: 1.55 }}>
+              <span style={{ color: s.color, flexShrink: 0, fontWeight: 700 }}>→</span>{b}
+            </div>
+          ))}
+        </div>
+        <div style={{ padding: "16px 20px", background: s.color + "10", borderRadius: 12, border: `1px solid ${s.color}25`,
+          display: "flex", alignItems: "center", gap: 16, marginBottom: 20 }}>
+          <div style={{ fontSize: 36, fontWeight: 700, color: s.color, fontFamily: "'DM Mono',monospace", letterSpacing: "-0.02em" }}>{s.stat.v}</div>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.50)" }}>{s.stat.l}</div>
+        </div>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <button onClick={() => onSlide(Math.max(0, slide - 1))} disabled={slide === 0}
+            style={{ padding: "8px 18px", borderRadius: 9, fontSize: 12, fontWeight: 600, fontFamily: "inherit",
+              background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)",
+              color: slide === 0 ? "rgba(255,255,255,0.2)" : "#f1f5f9", cursor: slide === 0 ? "default" : "pointer" }}>← Prev</button>
+          <div style={{ display: "flex", gap: 6, flex: 1, justifyContent: "center" }}>
+            {slides.map((_, i) => (
+              <div key={i} onClick={() => onSlide(i)} style={{ width: i === slide ? 20 : 6, height: 6, borderRadius: 3,
+                background: i === slide ? s.color : "rgba(255,255,255,0.2)", cursor: "pointer", transition: "all 0.2s" }} />
+            ))}
+          </div>
+          {slide < slides.length - 1
+            ? <button onClick={() => onSlide(slide + 1)}
+                style={{ padding: "8px 18px", borderRadius: 9, fontSize: 12, fontWeight: 600, fontFamily: "inherit",
+                  background: s.color + "18", border: `1px solid ${s.color}50`, color: s.color, cursor: "pointer" }}>Next →</button>
+            : <button onClick={onClose}
+                style={{ padding: "8px 18px", borderRadius: 9, fontSize: 12, fontWeight: 600, fontFamily: "inherit",
+                  background: "#10b981" + "18", border: "1px solid #10b98150", color: "#10b981", cursor: "pointer" }}>✓ Done</button>
+          }
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── PIPELINE RUN STRIP ───────────────────────────────────────────────────────
+function PipelineRunStrip({ running, step, onRun, tx }) {
+  const steps = ["RFM","SIGNAL","CLUSTER","PERSONA","ORCH"];
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 18px",
+      background: running ? "rgba(232,17,45,0.08)" : "rgba(255,255,255,0.03)",
+      borderRadius: 12, border: `1px solid ${running ? "rgba(232,17,45,0.3)" : "rgba(255,255,255,0.08)"}`,
+      marginBottom: 14, flexWrap: "wrap" }}>
+      <div style={{ flex: 1 }}>
+        <div style={{ fontSize: 12, fontWeight: 600, color: "#f1f5f9", marginBottom: 8 }}>
+          {running ? `Running Agent ${step}...` : "Run Full Pipeline · Agents 1–5 Sequential"}
+        </div>
+        <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+          {steps.map((s, i) => {
+            const done = running && step > i + 1;
+            const active = running && step === i + 1;
+            return (
+              <div key={s} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <div style={{ padding: "3px 10px", borderRadius: 8, fontSize: 9, fontWeight: 700,
+                  fontFamily: "'DM Mono',monospace",
+                  background: done ? "rgba(16,185,129,0.15)" : active ? "rgba(232,17,45,0.15)" : "rgba(255,255,255,0.05)",
+                  border: `1px solid ${done ? "rgba(16,185,129,0.35)" : active ? "rgba(232,17,45,0.4)" : "rgba(255,255,255,0.1)"}`,
+                  color: done ? "#10b981" : active ? "#E8112D" : "rgba(255,255,255,0.35)",
+                  animation: active ? "pulse 1s infinite" : "none" }}>
+                  {done ? "✓" : ""}{s}
+                </div>
+                {i < steps.length - 1 && <span style={{ color: "rgba(255,255,255,0.2)", fontSize: 10 }}>→</span>}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <button onClick={onRun} disabled={running}
+        style={{ padding: "10px 22px", borderRadius: 10, fontSize: 12, fontWeight: 700, fontFamily: "inherit",
+          cursor: running ? "not-allowed" : "pointer", whiteSpace: "nowrap",
+          background: running ? "rgba(255,255,255,0.04)" : "linear-gradient(135deg,#E8112D,#b0000e)",
+          border: running ? "1px solid rgba(255,255,255,0.08)" : "none",
+          color: running ? "rgba(255,255,255,0.3)" : "#fff",
+          boxShadow: running ? "none" : "0 4px 20px rgba(232,17,45,0.4)" }}>
+        {running ? "Running..." : "▶ Run Full Pipeline"}
+      </button>
+    </div>
+  );
+}
+
+// ─── A/B TEST SECTION ─────────────────────────────────────────────────────────
+function ABTestSection({ inputA, setInputA, inputB, setInputB, result, onRun, tx }) {
+  const PERSONAS = ["Loyal Enthusiasts","New Explorers","Luxury Seekers","Business Travelers","Leisure Seekers","Family Campers","Adventure Seekers","Budget Campers"];
+  const InputPanel = ({ inp, setInp, label, color }) => (
+    <div style={{ flex: 1, padding: "20px", background: color + "08", borderRadius: 12, border: `1px solid ${color}25` }}>
+      <div style={{ fontSize: 12, fontWeight: 700, color, textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 16 }}>{label}</div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div>
+          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.06em" }}>Campaign name</div>
+          <input value={inp.name} onChange={e => setInp(p => ({ ...p, name: e.target.value }))}
+            style={{ width: "100%", padding: "7px 10px", borderRadius: 8, background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.12)", color: "#f1f5f9", fontSize: 12, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }} />
+        </div>
+        <div>
+          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.06em" }}>Budget ($)</div>
+          <input type="number" value={inp.budget} onChange={e => setInp(p => ({ ...p, budget: Number(e.target.value) }))}
+            style={{ width: "100%", padding: "7px 10px", borderRadius: 8, background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.12)", color: "#f1f5f9", fontSize: 12, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }} />
+        </div>
+        <div>
+          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.06em" }}>Channel mix %</div>
+          {[["Email", "emailPct", "#3b82f6"], ["SMS", "smsPct", "#10b981"], ["Push", "pushPct", "#8b5cf6"]].map(([ch, key, c]) => (
+            <div key={ch} style={{ marginBottom: 8 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, marginBottom: 3 }}>
+                <span style={{ color: c }}>{ch}</span>
+                <span style={{ color: "rgba(255,255,255,0.5)", fontFamily: "'DM Mono',monospace" }}>{inp[key]}%</span>
+              </div>
+              <input type="range" min="0" max="100" value={inp[key]}
+                onChange={e => setInp(p => ({ ...p, [key]: Number(e.target.value) }))}
+                style={{ width: "100%", accentColor: c }} />
+            </div>
+          ))}
+        </div>
+        <div>
+          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.06em" }}>Top persona</div>
+          <select value={inp.topPersona} onChange={e => setInp(p => ({ ...p, topPersona: e.target.value }))}
+            style={{ width: "100%", padding: "7px 10px", borderRadius: 8, background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.12)", color: "#f1f5f9", fontSize: 12, fontFamily: "inherit", outline: "none" }}>
+            {PERSONAS.map(p => <option key={p} value={p} style={{ background: "#060c1a" }}>{p}</option>)}
+          </select>
+        </div>
+      </div>
+    </div>
+  );
+
+  const winner = result && (parseFloat(result.a.roi) > parseFloat(result.b.roi) ? "a" : "b");
+
+  return (
+    <div className="fu">
+      <h1 style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 4 }}>A/B Test Simulator</h1>
+      <p style={{ fontSize: 13, color: tx.sub, marginBottom: 20 }}>Configure two campaign variants · Score against KOA-SPRING-2026 benchmarks · Agent 7 methodology</p>
+      <div style={{ display: "flex", gap: 16, marginBottom: 20 }}>
+        <InputPanel inp={inputA} setInp={setInputA} label="Variant A" color="#3b82f6" />
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          <div style={{ fontSize: 16, color: "rgba(255,255,255,0.2)", fontWeight: 700 }}>VS</div>
+        </div>
+        <InputPanel inp={inputB} setInp={setInputB} label="Variant B" color="#8b5cf6" />
+      </div>
+      <button onClick={onRun}
+        style={{ width: "100%", padding: "14px", borderRadius: 12, fontSize: 13, fontWeight: 700, fontFamily: "inherit",
+          cursor: "pointer", background: "linear-gradient(135deg,#E8112D,#b0000e)",
+          border: "none", color: "#fff", boxShadow: "0 4px 24px rgba(232,17,45,0.35)", marginBottom: 20 }}>
+        ▶ Run A/B Simulation
+      </button>
+      {result && (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+          {[["a","#3b82f6",inputA.name],["b","#8b5cf6",inputB.name]].map(([k,color,name]) => (
+            <div key={k} style={{ padding: "20px", background: winner === k ? color + "10" : "rgba(255,255,255,0.04)",
+              borderRadius: 12, border: `2px solid ${winner === k ? color + "50" : "rgba(255,255,255,0.08)"}` }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color, textTransform: "uppercase", letterSpacing: "0.07em" }}>Variant {k.toUpperCase()}</span>
+                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>{name}</span>
+                {winner === k && <span style={{ marginLeft: "auto", fontSize: 10, padding: "2px 8px", borderRadius: 8,
+                  background: color + "20", border: `1px solid ${color}40`, color, fontWeight: 700 }}>● Winner</span>}
+              </div>
+              {[["Projected Booking Lift", result[k].lift + "%", "#10b981"],
+                ["Projected ROI", result[k].roi + "%", "#FFCC00"],
+                ["Attributed Revenue", "$" + result[k].revenue, color],
+                ["Blended Engagement", result[k].engagement + "%", "#3b82f6"]].map(([label, val, c]) => (
+                <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center",
+                  padding: "8px 0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                  <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>{label}</span>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: c, fontFamily: "'DM Mono',monospace" }}>{val}</span>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── FORECAST SECTION ─────────────────────────────────────────────────────────
+function ForecastSection({ tx }) {
+  const waves = [
+    { wave: "Wave 1 (Actual)", recipients: 479695, openRate: 28.5, ctr: 4.2, roi: 3722, revenue: 2457000, lift: 19.0, color: "#10b981" },
+    { wave: "Wave 2 (Projected)", recipients: 575000, openRate: 30.2, ctr: 4.8, roi: 4100, revenue: 2950000, lift: 21.5, color: "#FFCC00" },
+    { wave: "Wave 3 (Projected)", recipients: 655000, openRate: 31.8, ctr: 5.1, roi: 4480, revenue: 3380000, lift: 23.2, color: "#8b5cf6" },
+  ];
+  const insights = [
+    { label: "Wave 2 Revenue Uplift", value: "+$493K", sub: "vs Wave 1 actual", color: "#10b981" },
+    { label: "Projected 3-Wave Total", value: "$8.79M", sub: "gross revenue impact", color: "#FFCC00" },
+    { label: "ROI Trajectory", value: "+20.4%", sub: "Wave 1 → Wave 3 improvement", color: "#8b5cf6" },
+    { label: "Optimal Send Window", value: "14 days", sub: "between waves per Agent 7", color: "#3b82f6" },
+  ];
+  return (
+    <div className="fu">
+      <h1 style={{ fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 4 }}>Wave Forecast · Agent 7 Projections</h1>
+      <p style={{ fontSize: 13, color: tx.sub, marginBottom: 20 }}>Based on KOA-SUMMER-2026 benchmark deltas · 14-day wave cadence · NPS correlation r=0.965</p>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 10, marginBottom: 18 }}>
+        {insights.map(i => (
+          <div key={i.label} style={{ padding: "16px 14px", background: i.color + "0d", borderRadius: 12, border: `1px solid ${i.color}22` }}>
+            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 8 }}>{i.label}</div>
+            <div style={{ fontSize: 22, fontWeight: 700, color: i.color, fontVariantNumeric: "tabular-nums" }}>{i.value}</div>
+            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.32)", marginTop: 4 }}>{i.sub}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 18 }}>
+        {waves.map((w, wi) => (
+          <div key={w.wave} style={{ padding: "20px 22px", background: "rgba(255,255,255,0.03)", borderRadius: 12, border: `1px solid ${w.color}25` }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+              <div style={{ width: 8, height: 8, borderRadius: "50%", background: w.color, boxShadow: `0 0 8px ${w.color}` }} />
+              <span style={{ fontSize: 13, fontWeight: 700, color: "#f1f5f9" }}>{w.wave}</span>
+              {wi > 0 && <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 8, background: w.color + "18", border: `1px solid ${w.color}35`, color: w.color, fontWeight: 600 }}>Projected</span>}
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(6,1fr)", gap: 12 }}>
+              {[
+                ["Recipients", w.recipients.toLocaleString()],
+                ["Booking Lift", w.lift + "%"],
+                ["Email Open", w.openRate + "%"],
+                ["CTR", w.ctr + "%"],
+                ["ROI", w.roi.toLocaleString() + "%"],
+                ["Revenue Impact", "$" + (w.revenue / 1000000).toFixed(2) + "M"],
+              ].map(([k, v]) => (
+                <div key={k}>
+                  <div style={{ fontSize: 9, color: "rgba(255,255,255,0.32)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 3 }}>{k}</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: w.color, fontFamily: "'DM Mono',monospace" }}>{v}</div>
+                </div>
+              ))}
+            </div>
+            {wi > 0 && (
+              <div style={{ marginTop: 12, padding: "10px 12px", background: "rgba(255,255,255,0.03)", borderRadius: 8, border: "1px solid rgba(255,255,255,0.06)" }}>
+                <div className="bar-track">
+                  <div className="bar-fill" style={{ width: `${Math.min((w.roi / 5000) * 100, 95)}%`, background: `linear-gradient(90deg,${w.color},${w.color}80)` }} />
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+      <div style={{ padding: "16px 20px", background: "rgba(255,255,255,0.03)", borderRadius: 12, border: "1px solid rgba(255,255,255,0.07)" }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,0.38)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10 }}>Agent 7 Recommendations</div>
+        {[
+          "Schedule Wave 2 within 14 days to capitalize on campaign momentum",
+          "Increase SMS allocation for Wave 2 — 91.2% read rate exceeds benchmark by 3.9%",
+          "Loyal Enthusiasts is top performer — prioritize budget allocation and early booking access",
+          "Maintain 10% holdout group across all waves to preserve statistical validity",
+        ].map((r, i) => (
+          <div key={i} style={{ display: "flex", gap: 8, marginBottom: 7, fontSize: 12, color: "rgba(255,255,255,0.55)", lineHeight: 1.5 }}>
+            <span style={{ color: "#10b981", flexShrink: 0 }}>→</span>{r}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+
 function AgentOutputPanel({ agentId, raw }) {
   const [open, setOpen] = useState(false);
   const parsed = useMemo(() => parseAgentResult(raw), [raw]);
@@ -1265,6 +1604,14 @@ export default function App(){
   const[modal,setModal]=useState(null);
   const[time,setTime]=useState(new Date());
   const[orchFilter,setOrchFilter]=useState("All");
+  const[caseStudyOpen,setCaseStudyOpen]=useState(false);
+  const[caseStudySlide,setCaseStudySlide]=useState(0);
+  const[pipelineRunning,setPipelineRunning]=useState(false);
+  const[pipelineStep,setPipelineStep]=useState(-1);
+  const[kpiDismissed,setKpiDismissed]=useState(false);
+  const[abInputA,setAbInputA]=useState({name:"Wave 2 Email",budget:45000,emailPct:60,smsPct:30,pushPct:10,topPersona:"Loyal Enthusiasts"});
+  const[abInputB,setAbInputB]=useState({name:"Wave 2 SMS-First",budget:45000,emailPct:30,smsPct:60,pushPct:10,topPersona:"Family Campers"});
+  const[abResult,setAbResult]=useState(null);
   const open=useCallback((type,item)=>setModal({type,item}),[]);
   const{agentData,loading,errors,runAgent}=useAiriaAgent();
 
@@ -1288,6 +1635,36 @@ export default function App(){
     {id:"personas",l:"Personas"},{id:"orchestration",l:"Orchestration"},{id:"campaign",l:"Campaign"},
     {id:"loyalty",l:"Loyalty"},{id:"accommodation",l:"Accommodation"},{id:"campgrounds",l:"Campgrounds"},
   ];
+
+  const runFullPipeline = useCallback(async () => {
+    if (pipelineRunning) return;
+    setPipelineRunning(true);
+    setPipelineStep(0);
+    for (let id = 1; id <= 5; id++) {
+      setPipelineStep(id);
+      await new Promise(res => {
+        runAgent(id);
+        setTimeout(res, 8000);
+      });
+    }
+    setPipelineRunning(false);
+    setPipelineStep(-1);
+  }, [pipelineRunning, runAgent]);
+
+  const runABTest = useCallback(() => {
+    const score = (inp) => {
+      const emailW = 0.45, smsW = 0.35, pushW = 0.20;
+      const baseOpen = 28.5, baseSMS = 91.2, basePush = 15.0;
+      const blendedEngagement = (inp.emailPct/100)*baseOpen*emailW + (inp.smsPct/100)*baseSMS*smsW + (inp.pushPct/100)*basePush*pushW;
+      const budgetMultiplier = Math.min(inp.budget / 45000, 1.5);
+      const personaBonus = {"Loyal Enthusiasts":1.12,"Family Campers":1.08,"Business Travelers":1.05,"New Explorers":1.04,"Luxury Seekers":1.03,"Leisure Seekers":1.01,"Adventure Seekers":1.00,"Budget Campers":0.97}[inp.topPersona] || 1.0;
+      const projectedLift = 19.0 * (blendedEngagement / 22) * budgetMultiplier * personaBonus;
+      const attributedRevenue = (inp.budget / 45000) * 1719900 * personaBonus;
+      const roi = ((attributedRevenue - inp.budget) / inp.budget * 100).toFixed(1);
+      return { lift: projectedLift.toFixed(1), revenue: Math.round(attributedRevenue).toLocaleString(), roi, engagement: blendedEngagement.toFixed(1) };
+    };
+    setAbResult({ a: score(abInputA), b: score(abInputB) });
+  }, [abInputA, abInputB]);
 
   const filteredPlans = orchFilter === "All"
     ? AGENT5_DATA.campaign_plans
@@ -1329,6 +1706,10 @@ export default function App(){
               animation:"pulse 2s infinite",boxShadow:`0 0 6px ${tx.green}`}}/>
             {time.toLocaleTimeString("en-US",{hour12:false})}
           </div>
+          <button onClick={()=>{setCaseStudyOpen(true);setCaseStudySlide(0);}}
+            style={{width:32,height:32,borderRadius:8,cursor:"pointer",fontSize:13,fontWeight:700,
+              background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.14)",
+              display:"flex",alignItems:"center",justifyContent:"center",color:"rgba(255,255,255,0.6)"}}>?</button>
           <button onClick={()=>setDark(!dark)}
             style={{width:32,height:32,borderRadius:8,cursor:"pointer",fontSize:14,
               background:dark?"rgba(255,255,255,0.08)":"rgba(0,0,0,0.07)",
@@ -1342,9 +1723,13 @@ export default function App(){
       {/* MAIN */}
       <main style={{position:"relative",zIndex:1,padding:"24px 22px 64px",maxWidth:1380,margin:"0 auto"}}>
 
-        {/* ── OVERVIEW ── */}
+        {!kpiDismissed && <KPIAlertBanner onDismiss={()=>setKpiDismissed(true)} tx={tx}/>}
+      {caseStudyOpen && <CaseStudyModal slide={caseStudySlide} onSlide={setCaseStudySlide} onClose={()=>setCaseStudyOpen(false)}/>}
+
+      {/* ── OVERVIEW ── */}
         {sec==="overview"&&(
           <div key="ov" className="fu">
+            <PipelineRunStrip running={pipelineRunning} step={pipelineStep} onRun={runFullPipeline} tx={tx}/>
             <h1 style={{fontSize:24,fontWeight:700,letterSpacing:"-0.02em",marginBottom:4}}>KOA Guest Intelligence</h1>
             <p style={{fontSize:13,color:tx.sub,marginBottom:22}}>7-agent Airia pipeline · 10.9M reservations · 518 campgrounds · All 7 agents complete · Click anything</p>
 
@@ -1842,6 +2227,8 @@ export default function App(){
 
         {/* ── CAMPGROUNDS ── */}
         {sec==="campgrounds"&&<CampsSection onSelect={({type,item})=>open(type,item)}/>}
+        {sec==="abtest"&&<ABTestSection inputA={abInputA} setInputA={setAbInputA} inputB={abInputB} setInputB={setAbInputB} result={abResult} onRun={runABTest} tx={tx}/>}
+        {sec==="forecast"&&<ForecastSection tx={tx}/>}
 
       </main>
 
