@@ -1759,7 +1759,7 @@ export default function App(){
 
   return(
     <div style={{minHeight:"100vh",color:tx.text,fontFamily:"'DM Sans',system-ui,sans-serif",position:"relative",
-      backgroundImage:`url("https://blueridge-2022.s3.amazonaws.com/images/TEMP-bg-mtns.jpg?v=1655240982")`,
+      backgroundImage:`url("https://koa.com/content/campgrounds/toccoa-river/photos/0be94425-9bc5-45d8-8574-c5030228cea3photo8089cf86-afb9-4fe9-b862-4f551115d886.jpeg.axd?preset=campgroundphoto")`,
       backgroundSize:"cover",backgroundPosition:"center top",backgroundAttachment:"fixed",backgroundRepeat:"no-repeat"}}>
       {/* Mountain overlay */}
       <div style={{position:"fixed",inset:0,zIndex:0,
