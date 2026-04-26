@@ -1525,7 +1525,7 @@ export default function App(){
                 const liveRaw=agentData[a.id];
                 const isLoading=loading[a.id];
                 const err=errors[a.id];
-                const canRun=a.status==="complete"||a.status==="historical";
+                const canRun=(a.status==="complete"||a.status==="historical")&&a.id!==7;
                 return(
                   <GCard key={a.id} accent={a.color} className="fu" style={{padding:"17px 20px",animationDelay:`${i*50}ms`}}>
                     <div style={{display:"flex",alignItems:"center",gap:14}}>
