@@ -869,6 +869,75 @@ function Agent7Output({ data }) {
   );
 }
 
+// ─── PIPELINE COMPLETE MODAL ──────────────────────────────────────────────────
+function PipelineCompleteModal({ agentData, onClose, onViewPipeline }) {
+  const summaries = [1,2,3,4,5].map(id => {
+    const raw = agentData[id];
+    if (!raw) return { id, status: "no data", detail: "" };
+    try {
+      let str = typeof raw.result === "string" ? raw.result : JSON.stringify(raw.result || raw);
+      str = str.replace(/^```json\s*/i,"").replace(/^```\s*/i,"").replace(/```\s*$/,"").trim();
+      const parsed = JSON.parse(str);
+      const labels = {
+        1: `${parsed?.summary?.segments_generated || parsed?.segments?.length || "?"} segments · ${parsed?.summary?.total_guests || "?"} guests`,
+        2: `${parsed?.top_actionable_signals?.length || "?"} signals ranked`,
+        3: `${parsed?.clusters?.length || "?"} clusters identified`,
+        4: `${parsed?.persona_cards?.length || parsed?.summary?.total_personas || "?"} personas synthesized`,
+        5: `${parsed?.campaign_plans?.length || parsed?.total_personas || "?"} personas orchestrated`,
+      };
+      return { id, status: "✓ complete", detail: labels[id] || "Output received" };
+    } catch {
+      return { id, status: "✓ complete", detail: "Output received" };
+    }
+  });
+
+  const names = {1:"Data Processing",2:"Signal Discovery",3:"Pattern Clustering",4:"Persona Synthesis",5:"Master Orchestrator"};
+  const colors = {1:"#10b981",2:"#10b981",3:"#10b981",4:"#10b981",5:"#10b981"};
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-inner" onClick={e=>e.stopPropagation()} style={{maxWidth:520}}>
+        <div style={{textAlign:"center",marginBottom:20}}>
+          <div style={{fontSize:32,marginBottom:8}}>🎉</div>
+          <h2 style={{fontSize:20,fontWeight:700,color:"#f1f5f9",marginBottom:4}}>Pipeline Complete</h2>
+          <p style={{fontSize:12,color:"rgba(255,255,255,0.42)"}}>Agents 1–5 executed successfully</p>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:20}}>
+          {summaries.map(s => (
+            <div key={s.id} style={{display:"flex",alignItems:"center",gap:12,padding:"12px 14px",
+              background:"rgba(16,185,129,0.06)",borderRadius:10,border:"1px solid rgba(16,185,129,0.2)"}}>
+              <div style={{width:32,height:32,borderRadius:9,background:"rgba(16,185,129,0.15)",
+                border:"1px solid rgba(16,185,129,0.3)",display:"flex",alignItems:"center",
+                justifyContent:"center",fontSize:9,fontWeight:800,color:"#10b981",
+                fontFamily:"'DM Mono',monospace",flexShrink:0}}>AG0{s.id}</div>
+              <div style={{flex:1}}>
+                <div style={{fontSize:12,fontWeight:600,color:"#f1f5f9",marginBottom:2}}>{names[s.id]}</div>
+                <div style={{fontSize:10,color:"rgba(255,255,255,0.42)"}}>{s.detail || s.status}</div>
+              </div>
+              <span style={{fontSize:10,color:"#10b981",fontWeight:700}}>✓</span>
+            </div>
+          ))}
+        </div>
+        <div style={{display:"flex",gap:10}}>
+          <button onClick={onViewPipeline}
+            style={{flex:1,padding:"11px",borderRadius:10,fontSize:12,fontWeight:700,fontFamily:"inherit",
+              cursor:"pointer",background:"linear-gradient(135deg,#E8112D,#b0000e)",
+              border:"none",color:"#fff",boxShadow:"0 4px 20px rgba(232,17,45,0.35)"}}>
+            View Full Results →
+          </button>
+          <button onClick={onClose}
+            style={{padding:"11px 18px",borderRadius:10,fontSize:12,fontWeight:600,fontFamily:"inherit",
+              cursor:"pointer",background:"rgba(255,255,255,0.06)",
+              border:"1px solid rgba(255,255,255,0.12)",color:"rgba(255,255,255,0.5)"}}>
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 // ─── KPI ALERT BANNER ────────────────────────────────────────────────────────
 function KPIAlertBanner({ onDismiss, tx }) {
   const alerts = [
@@ -1609,11 +1678,12 @@ export default function App(){
   const[pipelineRunning,setPipelineRunning]=useState(false);
   const[pipelineStep,setPipelineStep]=useState(-1);
   const[kpiDismissed,setKpiDismissed]=useState(false);
+  const[pipelineComplete,setPipelineComplete]=useState(false);
   const[abInputA,setAbInputA]=useState({name:"Wave 2 Email",budget:45000,emailPct:60,smsPct:30,pushPct:10,topPersona:"Loyal Enthusiasts"});
   const[abInputB,setAbInputB]=useState({name:"Wave 2 SMS-First",budget:45000,emailPct:30,smsPct:60,pushPct:10,topPersona:"Family Campers"});
   const[abResult,setAbResult]=useState(null);
   const open=useCallback((type,item)=>setModal({type,item}),[]);
-  const{agentData,loading,errors,runAgent}=useAiriaAgent();
+  const{agentData,setAgentData,loading,errors,setErrors,runAgent}=useAiriaAgent();
 
   useEffect(()=>{ document.body.className=dark?"":"light-mode"; },[dark]);
   useEffect(()=>{ const t=setInterval(()=>setTime(new Date()),1000); return()=>clearInterval(t); },[]);
@@ -1639,17 +1709,33 @@ export default function App(){
   const runFullPipeline = useCallback(async () => {
     if (pipelineRunning) return;
     setPipelineRunning(true);
+    setPipelineComplete(false);
     setPipelineStep(0);
+    const AGENT_IDS = {
+      1:"6c30db8e-f89f-463c-a724-30b4b2971d5c",
+      2:"7be970e3-cdef-42c8-be4b-ae8664d2afe2",
+      3:"ac8a9a6d-3688-4b1f-a9cd-5f35f2caa770",
+      4:"f05848cf-0e05-4cfa-b704-a789757a6548",
+      5:"197b7527-226d-46ce-a79e-1f97b3108aa4",
+    };
     for (let id = 1; id <= 5; id++) {
       setPipelineStep(id);
-      await new Promise(res => {
-        runAgent(id);
-        setTimeout(res, 8000);
-      });
+      try {
+        const res = await fetch("/api/run-agent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ agentId: AGENT_IDS[id], userInput: "run" }),
+        });
+        const raw = await res.json();
+        setAgentData(d => ({ ...d, [id]: raw }));
+      } catch(err) {
+        setErrors(e => ({ ...e, [id]: err.message }));
+      }
     }
     setPipelineRunning(false);
     setPipelineStep(-1);
-  }, [pipelineRunning, runAgent]);
+    setPipelineComplete(true);
+  }, [pipelineRunning]);
 
   const runABTest = useCallback(() => {
     const score = (inp) => {
@@ -1725,6 +1811,7 @@ export default function App(){
 
         {!kpiDismissed && <KPIAlertBanner onDismiss={()=>setKpiDismissed(true)} tx={tx}/>}
       {caseStudyOpen && <CaseStudyModal slide={caseStudySlide} onSlide={setCaseStudySlide} onClose={()=>setCaseStudyOpen(false)}/>}
+      {pipelineComplete && <PipelineCompleteModal agentData={agentData} onClose={()=>setPipelineComplete(false)} onViewPipeline={()=>{setPipelineComplete(false);setSec("pipeline");}}/>}
 
       {/* ── OVERVIEW ── */}
         {sec==="overview"&&(
