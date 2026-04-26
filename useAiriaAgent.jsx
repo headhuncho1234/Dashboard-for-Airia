@@ -44,5 +44,5 @@ export function useAiriaAgent() {
     }
   }, []);
 
-  return { agentData, loading, errors, runAgent };
+  return { agentData, setAgentData, loading, errors, setErrors, runAgent };
 }
