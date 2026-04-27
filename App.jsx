@@ -875,75 +875,6 @@ function Agent7Output({ data }) {
   );
 }
 
-// ─── PIPELINE COMPLETE MODAL ──────────────────────────────────────────────────
-function PipelineCompleteModal({ agentData, onClose, onViewPipeline }) {
-  const summaries = [1,2,3,4,5].map(id => {
-    const raw = agentData[id];
-    if (!raw) return { id, status: "no data", detail: "" };
-    try {
-      let str = typeof raw.result === "string" ? raw.result : JSON.stringify(raw.result || raw);
-      str = str.replace(/^```json\s*/i,"").replace(/^```\s*/i,"").replace(/```\s*$/,"").trim();
-      const parsed = JSON.parse(str);
-      const labels = {
-        1: `${parsed?.summary?.segments_generated || parsed?.segments?.length || "?"} segments · ${parsed?.summary?.total_guests || "?"} guests`,
-        2: `${parsed?.top_actionable_signals?.length || "?"} signals ranked`,
-        3: `${parsed?.clusters?.length || "?"} clusters identified`,
-        4: `${parsed?.persona_cards?.length || parsed?.summary?.total_personas || "?"} personas synthesized`,
-        5: `${parsed?.campaign_plans?.length || parsed?.total_personas || "?"} personas orchestrated`,
-      };
-      return { id, status: "✓ complete", detail: labels[id] || "Output received" };
-    } catch {
-      return { id, status: "✓ complete", detail: "Output received" };
-    }
-  });
-
-  const names = {1:"Data Processing",2:"Signal Discovery",3:"Pattern Clustering",4:"Persona Synthesis",5:"Master Orchestrator"};
-  const colors = {1:"#10b981",2:"#10b981",3:"#10b981",4:"#10b981",5:"#10b981"};
-
-  return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-inner" onClick={e=>e.stopPropagation()} style={{maxWidth:520}}>
-        <div style={{textAlign:"center",marginBottom:20}}>
-          <div style={{fontSize:32,marginBottom:8}}>🎉</div>
-          <h2 style={{fontSize:20,fontWeight:700,color:"#f1f5f9",marginBottom:4}}>Pipeline Complete</h2>
-          <p style={{fontSize:12,color:"rgba(255,255,255,0.42)"}}>Agents 1–5 executed successfully</p>
-        </div>
-        <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:20}}>
-          {summaries.map(s => (
-            <div key={s.id} style={{display:"flex",alignItems:"center",gap:12,padding:"12px 14px",
-              background:"rgba(16,185,129,0.06)",borderRadius:10,border:"1px solid rgba(16,185,129,0.2)"}}>
-              <div style={{width:32,height:32,borderRadius:9,background:"rgba(16,185,129,0.15)",
-                border:"1px solid rgba(16,185,129,0.3)",display:"flex",alignItems:"center",
-                justifyContent:"center",fontSize:9,fontWeight:800,color:"#10b981",
-                fontFamily:"'DM Mono',monospace",flexShrink:0}}>AG0{s.id}</div>
-              <div style={{flex:1}}>
-                <div style={{fontSize:12,fontWeight:600,color:"#f1f5f9",marginBottom:2}}>{names[s.id]}</div>
-                <div style={{fontSize:10,color:"rgba(255,255,255,0.42)"}}>{s.detail || s.status}</div>
-              </div>
-              <span style={{fontSize:10,color:"#10b981",fontWeight:700}}>✓</span>
-            </div>
-          ))}
-        </div>
-        <div style={{display:"flex",gap:10}}>
-          <button onClick={onViewPipeline}
-            style={{flex:1,padding:"11px",borderRadius:10,fontSize:12,fontWeight:700,fontFamily:"inherit",
-              cursor:"pointer",background:"linear-gradient(135deg,#E8112D,#b0000e)",
-              border:"none",color:"#fff",boxShadow:"0 4px 20px rgba(232,17,45,0.35)"}}>
-            View Full Results →
-          </button>
-          <button onClick={onClose}
-            style={{padding:"11px 18px",borderRadius:10,fontSize:12,fontWeight:600,fontFamily:"inherit",
-              cursor:"pointer",background:"rgba(255,255,255,0.06)",
-              border:"1px solid rgba(255,255,255,0.12)",color:"rgba(255,255,255,0.5)"}}>
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
 // ─── KPI ALERT BANNER ────────────────────────────────────────────────────────
 function KPIAlertBanner({ onDismiss, tx }) {
   const alerts = [
@@ -1064,51 +995,6 @@ function CaseStudyModal({ slide, onSlide, onClose }) {
           }
         </div>
       </div>
-    </div>
-  );
-}
-
-// ─── PIPELINE RUN STRIP ───────────────────────────────────────────────────────
-function PipelineRunStrip({ running, step, onRun, tx }) {
-  const steps = ["RFM","SIGNAL","CLUSTER","PERSONA","ORCH"];
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 18px",
-      background: running ? "rgba(232,17,45,0.08)" : "rgba(255,255,255,0.03)",
-      borderRadius: 12, border: `1px solid ${running ? "rgba(232,17,45,0.3)" : "rgba(255,255,255,0.08)"}`,
-      marginBottom: 14, flexWrap: "wrap" }}>
-      <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 12, fontWeight: 600, color: "#f1f5f9", marginBottom: 8 }}>
-          {running ? `Running Agent ${step}...` : "Run Full Pipeline · Agents 1–5 Sequential"}
-        </div>
-        <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-          {steps.map((s, i) => {
-            const done = running && step > i + 1;
-            const active = running && step === i + 1;
-            return (
-              <div key={s} style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                <div style={{ padding: "3px 10px", borderRadius: 8, fontSize: 9, fontWeight: 700,
-                  fontFamily: "'DM Mono',monospace",
-                  background: done ? "rgba(16,185,129,0.15)" : active ? "rgba(232,17,45,0.15)" : "rgba(255,255,255,0.05)",
-                  border: `1px solid ${done ? "rgba(16,185,129,0.35)" : active ? "rgba(232,17,45,0.4)" : "rgba(255,255,255,0.1)"}`,
-                  color: done ? "#10b981" : active ? "#E8112D" : "rgba(255,255,255,0.35)",
-                  animation: active ? "pulse 1s infinite" : "none" }}>
-                  {done ? "✓" : ""}{s}
-                </div>
-                {i < steps.length - 1 && <span style={{ color: "rgba(255,255,255,0.2)", fontSize: 10 }}>→</span>}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-      <button onClick={onRun} disabled={running}
-        style={{ padding: "10px 22px", borderRadius: 10, fontSize: 12, fontWeight: 700, fontFamily: "inherit",
-          cursor: running ? "not-allowed" : "pointer", whiteSpace: "nowrap",
-          background: running ? "rgba(255,255,255,0.04)" : "linear-gradient(135deg,#E8112D,#b0000e)",
-          border: running ? "1px solid rgba(255,255,255,0.08)" : "none",
-          color: running ? "rgba(255,255,255,0.3)" : "#fff",
-          boxShadow: running ? "none" : "0 4px 20px rgba(232,17,45,0.4)" }}>
-        {running ? "Running..." : "▶ Run Full Pipeline"}
-      </button>
     </div>
   );
 }
@@ -1303,6 +1189,7 @@ function AgentOutputPanel({ agentId, raw }) {
       {open && (
         <div style={{ padding: "12px", background: "rgba(0,0,0,0.2)", maxHeight: 520, overflowY: "auto" }}>
           {isStructured ? (
+            agentId === 1 ? <Agent1Output data={parsed} /> :
             agentId === 2 ? <Agent2Output data={parsed} /> :
             agentId === 3 ? <Agent3Output data={parsed} /> :
             agentId === 4 ? <Agent4Output data={parsed} /> :
@@ -1681,10 +1568,7 @@ export default function App(){
   const[orchFilter,setOrchFilter]=useState("All");
   const[caseStudyOpen,setCaseStudyOpen]=useState(false);
   const[caseStudySlide,setCaseStudySlide]=useState(0);
-  const[pipelineRunning,setPipelineRunning]=useState(false);
-  const[pipelineStep,setPipelineStep]=useState(-1);
   const[kpiDismissed,setKpiDismissed]=useState(false);
-  const[pipelineComplete,setPipelineComplete]=useState(false);
   const[abInputA,setAbInputA]=useState({name:"Wave 2 Email",budget:45000,emailPct:60,smsPct:30,pushPct:10,topPersona:"Loyal Enthusiasts"});
   const[abInputB,setAbInputB]=useState({name:"Wave 2 SMS-First",budget:45000,emailPct:30,smsPct:60,pushPct:10,topPersona:"Family Campers"});
   const[abResult,setAbResult]=useState(null);
@@ -1712,37 +1596,6 @@ export default function App(){
     {id:"loyalty",l:"Loyalty"},{id:"accommodation",l:"Accommodation"},{id:"campgrounds",l:"Campgrounds"},
   ];
 
-  const runFullPipeline = useCallback(async () => {
-    if (pipelineRunning) return;
-    setPipelineRunning(true);
-    setPipelineComplete(false);
-    setPipelineStep(0);
-    const AGENT_IDS = {
-      1:"6c30db8e-f89f-463c-a724-30b4b2971d5c",
-      2:"7be970e3-cdef-42c8-be4b-ae8664d2afe2",
-      3:"ac8a9a6d-3688-4b1f-a9cd-5f35f2caa770",
-      4:"f05848cf-0e05-4cfa-b704-a789757a6548",
-      5:"197b7527-226d-46ce-a79e-1f97b3108aa4",
-    };
-    for (let id = 1; id <= 5; id++) {
-      setPipelineStep(id);
-      try {
-        const res = await fetch("/api/run-agent", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ agentId: AGENT_IDS[id], userInput: "run" }),
-        });
-        const raw = await res.json();
-        setAgentData(d => ({ ...d, [id]: raw }));
-      } catch(err) {
-        setErrors(e => ({ ...e, [id]: err.message }));
-      }
-    }
-    setPipelineRunning(false);
-    setPipelineStep(-1);
-    setPipelineComplete(true);
-  }, [pipelineRunning]);
-
   const runABTest = useCallback(() => {
     const score = (inp) => {
       const emailW = 0.45, smsW = 0.35, pushW = 0.20;
@@ -1766,7 +1619,6 @@ export default function App(){
     <div style={{minHeight:"100vh",color:tx.text,fontFamily:"'DM Sans',system-ui,sans-serif",position:"relative",
       backgroundImage:`url("https://koa.com/content/campgrounds/toccoa-river/heroitems/10157heroitems33ee7944-7d62-4035-b7ba-40b887feab85.jpg?preset=hero-lg")`,
       backgroundSize:"cover",backgroundPosition:"center top",backgroundAttachment:"fixed",backgroundRepeat:"no-repeat"}}>
-      {/* Mountain overlay */}
       <div style={{position:"fixed",inset:0,zIndex:0,
         background:dark
           ? "linear-gradient(180deg,rgba(6,12,26,0.88) 0%,rgba(6,12,26,0.82) 40%,rgba(6,12,26,0.92) 100%)"
@@ -1825,16 +1677,14 @@ export default function App(){
       </header>
 
       {/* MAIN */}
-      <main style={{position:"relative",zIndex:1,padding:"24px 22px 64px",maxWidth:1380,margin:"0 auto",paddingTop: "24px"}}>
+      <main style={{position:"relative",zIndex:1,padding:"24px 22px 64px",maxWidth:1380,margin:"0 auto",paddingTop:"24px"}}>
 
         {!kpiDismissed && <KPIAlertBanner onDismiss={()=>setKpiDismissed(true)} tx={tx}/>}
-      {caseStudyOpen && <CaseStudyModal slide={caseStudySlide} onSlide={setCaseStudySlide} onClose={()=>setCaseStudyOpen(false)}/>}
-      {pipelineComplete && <PipelineCompleteModal agentData={agentData} onClose={()=>setPipelineComplete(false)} onViewPipeline={()=>{setPipelineComplete(false);setSec("pipeline");}}/>}
+        {caseStudyOpen && <CaseStudyModal slide={caseStudySlide} onSlide={setCaseStudySlide} onClose={()=>setCaseStudyOpen(false)}/>}
 
-      {/* ── OVERVIEW ── */}
+        {/* ── OVERVIEW ── */}
         {sec==="overview"&&(
           <div key="ov" className="fu">
-            <PipelineRunStrip running={pipelineRunning} step={pipelineStep} onRun={runFullPipeline} tx={tx}/>
             <h1 style={{fontSize:24,fontWeight:700,letterSpacing:"-0.02em",marginBottom:4}}>KOA Guest Intelligence</h1>
             <p style={{fontSize:13,color:tx.sub,marginBottom:22}}>7-agent Airia pipeline · 10.9M reservations · 518 campgrounds · All 7 agents complete · Click anything</p>
 
@@ -1919,7 +1769,6 @@ export default function App(){
                 ))}
               </GCard>
 
-              {/* Agent 5 orchestration preview on overview */}
               <GCard style={{padding:"18px 18px"}} onClick={()=>setSec("orchestration")}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
                   <h2 style={{fontSize:13,fontWeight:600,color:tx.text}}>Orchestration · Agent 5</h2>
@@ -2015,7 +1864,7 @@ export default function App(){
                 const liveRaw=agentData[a.id];
                 const isLoading=loading[a.id];
                 const err=errors[a.id];
-                const canRun=(a.status==="complete"||a.status==="historical")&&a.id!==7;
+                const canRun=a.id!==7;
                 return(
                   <GCard key={a.id} accent={a.color} className="fu" style={{padding:"17px 20px",animationDelay:`${i*50}ms`}}>
                     <div style={{display:"flex",alignItems:"center",gap:14}}>
@@ -2027,7 +1876,7 @@ export default function App(){
                         <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:3,flexWrap:"wrap"}}>
                           <span onClick={()=>open("agent",a)} style={{fontSize:13,fontWeight:600,color:tx.text,cursor:"pointer"}}>{a.name}</span>
                           <span style={{width:6,height:6,borderRadius:"50%",background:isLoading?KOA_YELLOW:a.color,display:"inline-block",
-                            boxShadow:`0 0 5px ${isLoading?KOA_YELLOW:a.color}`,animation:(a.status==="pending"||isLoading)?"pulse 2s infinite":"none"}}/>
+                            boxShadow:`0 0 5px ${isLoading?KOA_YELLOW:a.color}`,animation:isLoading?"pulse 2s infinite":"none"}}/>
                           <span style={{fontSize:11,color:isLoading?KOA_YELLOW:liveRaw?tx.green:a.color,fontWeight:600,textTransform:"capitalize"}}>
                             {isLoading?"running...":liveRaw?"✓ Live Data":a.status}
                           </span>
@@ -2096,13 +1945,11 @@ export default function App(){
           </div>
         )}
 
-        {/* ── ORCHESTRATION (AGENT 5) ── */}
+        {/* ── ORCHESTRATION ── */}
         {sec==="orchestration"&&(
           <div key="orch" className="fu">
             <h1 style={{fontSize:22,fontWeight:700,letterSpacing:"-0.02em",marginBottom:4}}>Master orchestration · Agent 5</h1>
             <p style={{fontSize:13,color:tx.sub,marginBottom:18}}>8 personas prioritized · campaign plans generated · ready for Agent 6 execution · click any card for full detail</p>
-
-            {/* Summary metrics */}
             <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:16}}>
               {[
                 {l:"Total personas",v:"8",s:"All campaign ready",c:KOA_YELLOW},
@@ -2117,16 +1964,12 @@ export default function App(){
                 </GCard>
               ))}
             </div>
-
-            {/* Filter chips */}
             <div style={{display:"flex",gap:8,marginBottom:14}}>
               {["All","High","Medium"].map(f=>(
                 <button key={f} onClick={()=>setOrchFilter(f)} className={`chip ${orchFilter===f?"active":""}`}>{f} priority</button>
               ))}
               <span style={{fontSize:11,color:tx.mut,alignSelf:"center",marginLeft:4}}>{filteredPlans.length} personas</span>
             </div>
-
-            {/* Campaign plan cards */}
             <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:16}}>
               {filteredPlans.map((p,i)=>{
                 const accent=PERSONA_ACCENT[p.persona_id]||"#64748b";
@@ -2166,8 +2009,6 @@ export default function App(){
                 );
               })}
             </div>
-
-            {/* Global suppression + measurement */}
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
               <GCard style={{padding:"16px 18px"}}>
                 <h3 style={{fontSize:12,fontWeight:600,color:tx.text,marginBottom:12}}>Global suppression rules</h3>
