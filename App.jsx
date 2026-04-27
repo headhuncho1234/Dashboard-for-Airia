@@ -959,7 +959,7 @@ function CaseStudyModal({ slide, onSlide, onClose }) {
           <span style={{ fontSize: 10, fontWeight: 700, color: s.color, textTransform: "uppercase", letterSpacing: "0.1em",
             padding: "3px 10px", borderRadius: 20, background: s.color + "18", border: `1px solid ${s.color}35` }}>{s.label}</span>
           <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.08)" }} />
-          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.28)" }}>KOA Guest Segmentation · GSU CIS-8010</span>
+          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.28)" }}>KOA Guest Segmentation · GSU CIS-8396</span>
         </div>
         <h2 style={{ fontSize: 22, fontWeight: 700, color: "#f1f5f9", marginBottom: 20, letterSpacing: "-0.02em" }}>{s.title}</h2>
         <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 24 }}>
