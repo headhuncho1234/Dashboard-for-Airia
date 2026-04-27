@@ -1644,7 +1644,7 @@ export default function App(){
             boxShadow:`0 4px 14px ${KOA_RED}50`}}>KOA</div>
           <div>
             <div style={{fontSize:13,fontWeight:700,color:tx.text,letterSpacing:"0.01em"}}>KOA Analytics</div>
-            <div style={{fontSize:9,color:tx.mut,letterSpacing:"0.07em",textTransform:"uppercase"}}>Guest Segmentation · GSU CIS-8010</div>
+            <div style={{fontSize:9,color:tx.mut,letterSpacing:"0.07em",textTransform:"uppercase"}}>Guest Segmentation · GSU CIS-8396</div>
           </div>
         </div>
 
@@ -2188,7 +2188,7 @@ export default function App(){
         <span style={{color:tx.green}}>● AGENTS 1–7 COMPLETE · PIPELINE DONE</span>
         <span>10.9M RESERVATIONS · 518 CAMPGROUNDS</span>
         <span>479K RECIPIENTS · ROI 3,722% · NPS r=0.965</span>
-        <span style={{marginLeft:"auto"}}>AIRIA GUEST SEGMENTATION v2.0 · GSU CIS-8010 · {new Date().toLocaleDateString()}</span>
+        <span style={{marginLeft:"auto"}}>AIRIA GUEST SEGMENTATION v2.0 · GSU CIS-8396 · {new Date().toLocaleDateString()}</span>
       </div>
 
       <Modal modal={modal} onClose={()=>setModal(null)}/>
